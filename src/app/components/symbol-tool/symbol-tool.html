@@ -80,7 +80,7 @@
       <div (click)="copyToClipboard(character.symbol)"
         class="html-character flex items-center gap-4 p-2 m-1 text-lg bg-white border border-slate-300 shadow-md rounded-lg flex-wrap cursor-pointer">
         <span class="symbol">{{ character.symbol }}</span>
-        <small>(U+{{ character.code }})</small>
+        <!-- <small>(U+{{ character.code }})</small> -->
         @if (copiedSymbol() === character.symbol) {
         <span
           class="absolute -top-10 scale-100 px-2 py-1 text-xs font-bold text-white bg-slate-800 rounded shadow-lg animate-fade-in-up flex items-center gap-1 z-10 whitespace-nowrap">
