@@ -42,7 +42,7 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Demo & Usage
 
-- https://superpck.github.io/ngx-pk-ui/
+- https://superpck.github.io/developer-tools/#/
 
 
 ## 📄 License
