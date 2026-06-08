@@ -1,4 +1,4 @@
-# API Tester (Developer Tools)
+# Developer Tools for Web Applications
 
 **Version:** 1.2.0  
 **Build:** 2026.06.08-1
