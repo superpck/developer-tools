@@ -7,7 +7,8 @@
     "start": "ng serve --port 4204 --open",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:gh-pages": "ng build --base-href /developer-tools/"
   },
   "prettier": {
     "printWidth": 100,

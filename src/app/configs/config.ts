@@ -5,4 +5,7 @@ export default {
   appDescribe: 'Developer tools for development and testing',
   version, subVersion,
   production: true,
+  link: {
+    github: 'https://github.com/superpck/developer-tools'
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import Config from '../../configs/config';
 
 @Component({
   selector: 'app-home',
@@ -9,5 +10,5 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-
+  config = Config;
 }
