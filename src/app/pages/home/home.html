@@ -96,5 +96,27 @@
       </div>
 
     </div>
+
+    <footer class="w-full pt-10 md:pt-14">
+      <div class="rounded-3xl border border-slate-200/80 bg-white/80 backdrop-blur-md px-6 py-5 shadow-sm md:px-8 md:py-6">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div class="space-y-2 text-left">
+            <div class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-linear-to-r from-indigo-500 to-violet-500 shadow-sm"></span>
+              {{ config.appName }}
+            </div>
+            <p class="max-w-xl text-sm leading-6 text-slate-500">
+              A polished set of tools for fast requests, secure token work, and utility checks, built for daily use.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
+            <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">request flow</span>
+            <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">token tools</span>
+            <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">{{ currentYear }}</span>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 </main>

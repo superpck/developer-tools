@@ -10,4 +10,5 @@ import Config from '../../configs/config';
 })
 export class Layout {
   config = Config;
+  readonly currentYear = new Date().getFullYear();
 }

@@ -11,4 +11,5 @@ import Config from '../../configs/config';
 })
 export class Home {
   config = Config;
+  readonly currentYear = new Date().getFullYear();
 }
