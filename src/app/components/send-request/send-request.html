@@ -59,6 +59,11 @@
           [class]="activeTab() === 'body' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'">
           Body
         </button>
+        <button (click)="activeTab.set('curl')"
+          class="px-4 py-3 text-sm font-medium border-b-2 transition-colors focus:outline-none"
+          [class]="activeTab() === 'curl' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'">
+          cURL
+        </button>
       </div>
 
       <!-- Tab Contents -->
@@ -205,6 +210,22 @@
           </div>
           }
 
+        </div>
+        }
+
+        <!-- === cURL TAB === -->
+        @if (activeTab() === 'curl') {
+        <div class="space-y-4 animate-in fade-in duration-200">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-slate-700">Preview cURL Command</h3>
+            <button (click)="copyCurl()" class="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold focus:outline-none transition-colors border border-slate-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Copy
+            </button>
+          </div>
+          <pre class="w-full p-4 bg-slate-800 text-slate-100 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-x-auto shadow-inner">{{ curlCommand() }}</pre>
         </div>
         }
       </div>

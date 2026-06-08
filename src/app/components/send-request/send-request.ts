@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TesterService, HistoryRecord } from '../../services/tester.service';
@@ -27,7 +27,7 @@ export class SendRequest {
   method = signal('GET');
   url = signal('');
 
-  activeTab = signal<'auth' | 'headers' | 'body'>('headers');
+  activeTab = signal<'auth' | 'headers' | 'body' | 'curl'>('headers');
   responseTab = signal<'body' | 'headers'>('body');
 
   // Auth
@@ -79,6 +79,55 @@ export class SendRequest {
   }
 
   responseState = signal<any>(null);
+
+  curlCommand = computed(() => {
+    const url = this.url().trim() || 'http://localhost';
+    const method = this.method();
+    let cmd = `curl --request ${method} \\\n  --url '${url}'`;
+
+    // Headers
+    const activeHeaders = this.headers().filter(h => h.enabled && h.key);
+    for (const h of activeHeaders) {
+      cmd += ` \\\n  --header '${h.key}: ${h.value}'`;
+    }
+
+    // Auth
+    if (this.authType() === 'bearer' && this.bearerToken()) {
+      cmd += ` \\\n  --header 'Authorization: Bearer ${this.bearerToken()}'`;
+    }
+
+    // Body
+    if (method !== 'GET' && method !== 'HEAD') {
+      const bType = this.bodyType();
+      if (bType === 'raw' && this.bodyRaw()) {
+        const escapedContent = this.bodyRaw().replace(/'/g, "'\\''");
+        cmd += ` \\\n  --data '${escapedContent}'`;
+      } else if (bType === 'form-data') {
+        const fd = this.formData().filter(f => f.enabled && f.key);
+        for (const f of fd) {
+          const escapedVal = f.value.replace(/'/g, "'\\''");
+          cmd += ` \\\n  --form '${f.key}="${escapedVal}"'`;
+        }
+      } else if (bType === 'urlencoded') {
+        const ue = this.urlEncoded().filter(u => u.enabled && u.key);
+        if (ue.length > 0) {
+          cmd += ` \\\n  --header 'Content-Type: application/x-www-form-urlencoded'`;
+          for (const u of ue) {
+            const escapedVal = u.value.replace(/'/g, "'\\''");
+            cmd += ` \\\n  --data-urlencode '${u.key}=${escapedVal}'`;
+          }
+        }
+      }
+    }
+
+    return cmd;
+  });
+
+  copyCurl() {
+    navigator.clipboard.writeText(this.curlCommand()).then(() => {
+      this.showToast('cURL command copied to clipboard!');
+    });
+  }
 
   async send() {
     this.responseState.set({ loading: true });

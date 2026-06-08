@@ -1,5 +1,8 @@
 # API Tester (Developer Tools)
 
+**Version:** 1.0.1  
+**Build:** 2026.06.08-2
+
 A modern, fast, and intuitive web application built with Angular and Tailwind CSS to construct, send, and analyze HTTP requests directly from your browser. It also includes built-in developer tools like Cryptography utilities and a JWT visualizer.
 
 ## 🔥 Features
