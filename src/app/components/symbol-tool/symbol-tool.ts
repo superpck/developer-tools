@@ -45,6 +45,9 @@ export class SymbolTool implements OnInit {
     },
   ];
 
+  favoriteSymbols: any = `❏❐❑❒❍☐☑☒◼ ✓✔✕✖✗✘ ✙✛✚➕ ❌❎ ✅ ✀ ✂ ✍✎✏✐ ✆☎ ❓❔❕❗⭕⛔⚠️⛖♯⛯✶✨ ◯❍⊕⊖⊝⌽⊗⊘๏⊙⊚⊛ ⚐⚑ ✱✲✳✶✷ ⁝⁞‥ … 📅📆⌚⏰⏱⏳⌛ ⏴⏵⏶⏷⏹▵◃⧀⧁⏻ ↺↻⏩
+    ⏪ ⏫ ⏬ ←⬅⬆⬇↑→➔➜➝➞➟➠➡➧➨➩➲↓↔↕↖↗↘↙⁄‹›“” ⚡ ⚪ ⚫ ⬛ ⬜ ♀♂ ⏿👓 👁️👁️‍🗨️🙈🔐🔓🔒🔑 ๛ ℃℉
+    💾📁📂🗒📝📰🗑☢ ☣ ⛐ 💻 🖥 🖨📱 ⌂ 👤👥🧑🏻‍💻👨🏽‍💻👩🏻‍💻🫄🏻🧑‍🍼🤱🏻🧑🏻‍⚕️🧑🏻‍🔬💆🏻 🔗 ⛓️‍💥 🔍🔎📎📤🔧💬`;
   symbolCharacters = [
     { name: "Symbol", range: [0x2600, 0x26FF], characters: [] },
     { name: "Dingbats", range: [0x2700, 0x27BF], characters: [] },
@@ -73,6 +76,9 @@ export class SymbolTool implements OnInit {
 
   async ngOnInit() {
     // อักษรสำหรับ HTML
+    const favoriteArray = Array.from(this.favoriteSymbols.replace(/\s/g, ''));
+    this.favoriteSymbols = favoriteArray;
+
     this.symbolCharacters.forEach(category => {
       if (category.range.length == 2) {
         const [start, end] = category.range;
