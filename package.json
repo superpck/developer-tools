@@ -5,10 +5,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4204 --open",
-    "build": "ng build",
+    "build": "rm -rf dist && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:gh-pages": "ng build --base-href /developer-tools/"
+    "build:gh-pages": "rm -rf dist && ng build --base-href /developer-tools/"
   },
   "prettier": {
     "printWidth": 100,
