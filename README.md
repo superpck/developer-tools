@@ -1,7 +1,7 @@
 # API Tester (Developer Tools)
 
-**Version:** 1.0.1  
-**Build:** 2026.06.08-2
+**Version:** 1.1.0  
+**Build:** 2026.06.08-1
 
 A modern, fast, and intuitive web application built with Angular and Tailwind CSS to construct, send, and analyze HTTP requests directly from your browser. It also includes built-in developer tools like Cryptography utilities and a JWT visualizer.
 
@@ -15,8 +15,8 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 
 ## 🚀 Tech Stack
 
-- [Angular 21](https://angular.dev/) (Standalone Components, Signals & Control flows)
-- [Tailwind CSS v3+](https://tailwindcss.com/)
+- [Angular 22](https://angular.dev/) (Standalone Components, Signals & Control flows)
+- [Tailwind CSS v4+](https://tailwindcss.com/)
 - [CryptoJS](https://github.com/brix/crypto-js)
 - Browser `fetch` API & `IndexedDB`
 
@@ -28,7 +28,7 @@ To start a local development server, run:
 npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Once the server is running, open your browser and navigate to `http://localhost:4204/`. The application will automatically reload whenever you modify any of the source files.
 
 ## 📦 Building
 
