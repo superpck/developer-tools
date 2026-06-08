@@ -145,7 +145,13 @@ export class SendRequest {
 
   async save() {
     const params = this.getRequestParams();
-    await this.testerService.saveRequest(params);
+
+    const describe = window.prompt('Describe this request (optional)')?.trim();
+    await this.testerService.saveRequest({
+      ...params,
+      describe: describe || undefined,
+    });
+
     this.showToast(`Saved in indexedDB: ${params.method} ${params.url || 'Unnamed URL'}`);
   }
 

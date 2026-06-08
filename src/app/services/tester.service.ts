@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 export interface RequestParams {
   method: string;
   url: string;
+  describe?: string;
   headers: { key: string; value: string; enabled: boolean }[];
   authType: 'none' | 'bearer';
   bearerToken: string;
