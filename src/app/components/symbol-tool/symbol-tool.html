@@ -38,16 +38,17 @@
   </div>
 </div>
 
-<div class="m-10 sm:m-1 md:m-2">
-  <!-- favorite -->
-  <div class="w-full mt-10" (click)="activeTab.set(activeTab()=='favorite' ? '' : 'favorite')"
-    class="px-6 py-3 bg-gray-400 text-gray-900 rounded-lg hover:bg-gray-500 transition-colors shadow-lg font-medium">
+<!-- favorite -->
+<div class="my-2">
+  <div class="w-full" (click)="activeTab.set(activeTab()=='favorite' ? '' : 'favorite')"
+    class="px-6 sm:px-2 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors shadow-lg font-medium">
     Favorite Symbols
   </div>
   @if (activeTab() == 'favorite') {
-  <div class="flex flex-wrap m-3 md:m-1 overflow-x-auto p-4 sm:p-2 bg-white border border-slate-300 rounded-md">
+  <div class="flex flex-wrap my-3 justify-between overflow-x-auto p-4 sm:p-2 bg-white border border-slate-300 rounded-md">
     @for (character of favoriteSymbols; track character) {
-    <div (click)="copyToClipboard(character)" class="flex flex-wrap items-center m-1 text-lg cursor-pointer">
+    <div (click)="copyToClipboard(character)"
+      class="flex items-center gap-2 p-2 m-1 w-10 text-xl hover:text-2xl bg-white border border-slate-300 shadow-md rounded-lg flex-wrap cursor-pointer">
       <span class="symbol">{{ character }}</span>
       @if (copiedSymbol() === character) {
       <span
@@ -70,15 +71,15 @@
   @for (item of symbolCharacters; track item) {
   <div class="my-2">
     <div class="w-full" (click)="activeTab.set(activeTab()==item.name ? '' : item.name)"
-      class="px-6 sm:px-2 py-3 bg-gray-400 text-gray-900 rounded-lg hover:bg-gray-500 transition-colors shadow-lg font-medium">
+      class="px-6 sm:px-2 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors shadow-lg font-medium">
       {{ item.name }}
     </div>
 
     @if (activeTab() == item.name) {
-    <div class="flex flex-wrap m-3 md:m-1 overflow-x-auto p-4 sm:p-2 bg-white border border-slate-300 rounded-md">
+    <div class="flex flex-wrap my-3 justify-between overflow-x-auto p-4 sm:p-2 bg-white border border-slate-300 rounded-md">
       @for (character of item.characters; track character.code) {
       <div (click)="copyToClipboard(character.symbol)"
-        class="html-character flex items-center gap-4 p-2 m-1 text-lg bg-white border border-slate-300 shadow-md rounded-lg flex-wrap cursor-pointer">
+        class="flex items-center gap-2 p-2 m-1 w-10 text-xl hover:text-2xl bg-white border border-slate-300 shadow-md rounded-lg flex-wrap cursor-pointer">
         <span class="symbol">{{ character.symbol }}</span>
         <!-- <small>(U+{{ character.code }})</small> -->
         @if (copiedSymbol() === character.symbol) {
@@ -100,10 +101,10 @@
     }
   </div>
   }
-
 </div>
 
 <!-- show copied charater in float div 4 sec -->
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded shadow-lg animate-fade-in-up z-50">
+<div
+  class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded shadow-lg animate-fade-in-up z-50">
   Copied character: {{ copiedSymbol() }}
 </div>
