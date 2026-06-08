@@ -1,0 +1,77 @@
+<div class="max-w-6xl mx-auto p-4 md:p-8 text-slate-800 w-full">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Encryption & Hashing Tool</h1>
+    <p class="text-slate-600">Quickly hash, encode, encrypt, or decrypt data securely in the browser.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Input Section -->
+    <div class="flex flex-col gap-4">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <label class="block text-sm font-semibold text-slate-700 mb-3">Settings</label>
+        
+        <div class="space-y-4">
+          <!-- Operation Type -->
+          <div>
+            <label class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Operation</label>
+            <select
+              [ngModel]="selectedOp()"
+              (ngModelChange)="selectedOp.set($event)"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+            >
+              <optgroup label="One-Way Hash">
+                @for (op of oneWayOps; track op) {
+                  <option [value]="op">{{ op }}</option>
+                }
+              </optgroup>
+              <optgroup label="Two-Way Encryption">
+                @for (op of twoWayOps; track op) {
+                  <option [value]="op">{{ op }}</option>
+                }
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Secret Key for AES -->
+          @if (selectedOp().startsWith('AES')) {
+            <div class="animate-in fade-in slide-in-from-top-2">
+              <label class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Secret Key</label>
+              <input
+                type="text"
+                placeholder="Enter secret key for AES..."
+                [ngModel]="secretKey()"
+                (ngModelChange)="secretKey.set($event)"
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col">
+        <label class="block text-sm font-semibold text-slate-700 mb-2">Input</label>
+        <textarea
+          [ngModel]="inputText()"
+          (ngModelChange)="inputText.set($event)"
+          placeholder="Enter text to hash or encrypt..."
+          class="w-full flex-1 min-h-[200px] p-3 font-mono text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-sm font-semibold text-slate-700">Output</label>
+      </div>
+      <div class="relative flex-1">
+        <textarea
+          readonly
+          [value]="resultText()"
+          placeholder="Result will appear here..."
+          class="w-full h-full min-h-[300px] p-3 font-mono text-sm bg-slate-100 border border-slate-200 rounded-lg outline-none text-slate-700 resize-none"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+</div>

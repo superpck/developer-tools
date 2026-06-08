@@ -1,6 +1,7 @@
 {
-  "name": "api-tester",
-  "version": "0.0.0",
+  "name": "basic-development-tool",
+  "version": "0.1.0",
+  "subVersion": "2026.06.08-1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4204 --open",
@@ -21,7 +22,7 @@
     ]
   },
   "private": true,
-  "packageManager": "npm@11.12.0",
+  "packageManager": "npm@11.16.0",
   "dependencies": {
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
@@ -29,18 +30,20 @@
     "@angular/forms": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "crypto-js": "^4.2.0",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@angular/build": "^22.0.0",
     "@angular/cli": "^22.0.0",
     "@angular/compiler-cli": "^22.0.0",
-    "@tailwindcss/postcss": "^4.1.12",
-    "jsdom": "^27.1.0",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.12",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/crypto-js": "^4.2.2",
+    "jsdom": "^29.1.1",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
-    "vitest": "^4.0.8"
+    "vitest": "^4.1.8"
   }
 }

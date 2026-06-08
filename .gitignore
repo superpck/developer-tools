@@ -39,5 +39,14 @@ testem.log
 __screenshots__/
 
 # System files
+*.sh
+*.tmp
+*.temp
+*.log
+*.logs
+*.bak
+*.backup
+*.swp
+*~
 .DS_Store
 Thumbs.db

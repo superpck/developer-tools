@@ -1,0 +1,30 @@
+<div class="min-h-screen bg-slate-50 flex flex-col pt-16">
+  <!-- Fixed Top Navigation -->
+  <nav class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-50 flex items-center px-4 md:px-6 shadow-sm">
+    <div class="flex items-center gap-2 mr-8">
+      <a routerLink="/" class="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-indigo-600 to-violet-600 hover:opacity-80 transition-opacity">
+        {{ config.appName }}
+      </a>
+    </div>
+
+    <div class="flex items-center gap-1 sm:gap-2">
+      <a routerLink="/request" routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+        API Calling
+      </a>
+      <a routerLink="/crypto" routerLinkActive="bg-violet-50 text-violet-700" 
+        class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+        Crypto Tool
+      </a>
+      <a routerLink="/jwt" routerLinkActive="bg-rose-50 text-rose-700" 
+        class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+        JWT Tool
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="grow flex flex-col">
+    <router-outlet></router-outlet>
+  </main>
+</div>

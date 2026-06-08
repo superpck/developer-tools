@@ -1,0 +1,167 @@
+<div class="max-w-6xl mx-auto p-4 md:p-8 text-slate-800 w-full">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">JWT Tool</h1>
+    <p class="text-slate-600">Securely decode, verify, and encode JSON Web Tokens.</p>
+  </div>
+
+  <div class="flex gap-4 mb-6">
+    <button
+      (click)="mode.set('Decode')"
+      [class.bg-indigo-600]="mode() === 'Decode'"
+      [class.text-white]="mode() === 'Decode'"
+      [class.bg-white]="mode() !== 'Decode'"
+      [class.text-slate-700]="mode() !== 'Decode'"
+      class="px-6 py-2 rounded-lg font-semibold shadow-sm border border-slate-200 transition-colors"
+    >
+      Decode
+    </button>
+    <button
+      (click)="mode.set('Encode')"
+      [class.bg-indigo-600]="mode() === 'Encode'"
+      [class.text-white]="mode() === 'Encode'"
+      [class.bg-white]="mode() !== 'Encode'"
+      [class.text-slate-700]="mode() !== 'Encode'"
+      class="px-6 py-2 rounded-lg font-semibold shadow-sm border border-slate-200 transition-colors"
+    >
+      Encode
+    </button>
+  </div>
+
+  @if (mode() === 'Decode') {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Left Column: Input Token -->
+      <div class="flex flex-col gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-full flex flex-col">
+          <label class="block text-sm font-semibold text-slate-700 mb-3">Encoded JWT</label>
+          <textarea
+            [ngModel]="encodedToken()"
+            (ngModelChange)="encodedToken.set($event)"
+            rows="12"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm break-all resize-none flex-1"
+            placeholder="Paste your JWT here (Header.Payload.Signature)"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Right Column: Decoded Result -->
+      <div class="flex flex-col gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-full flex flex-col">
+          <label class="block text-sm font-semibold text-slate-700 mb-3">Decoded Content</label>
+          
+          @if (decodedResult()?.error) {
+            <div class="p-4 bg-red-50 text-red-700 rounded-lg text-sm">
+              {{ decodedResult()?.error }}
+            </div>
+          } @else if (decodedResult()?.headerObj || decodedResult()?.payloadObj) {
+            <div class="flex-1 flex flex-col gap-4">
+              
+              <!-- Header -->
+              <div>
+                <div class="text-xs uppercase font-bold text-rose-500 mb-1">Header (Algorithm & Token Type)</div>
+                <pre class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono whitespace-pre-wrap">{{ decodedResult()?.headerObj | json }}</pre>
+              </div>
+              
+              <!-- Payload -->
+              <div>
+                <div class="text-xs uppercase font-bold text-violet-500 mb-1">Payload (Data)</div>
+                <pre class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono whitespace-pre-wrap">{{ decodedResult()?.payloadObj | json }}</pre>
+              </div>
+
+              <!-- Signature Verify section -->
+              <div>
+                <div class="text-xs uppercase font-bold text-indigo-500 mb-1">Verify Signature</div>
+                <input
+                  [ngModel]="secretKey()"
+                  (ngModelChange)="secretKey.set($event)"
+                  type="text"
+                  class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm mb-2"
+                  placeholder="Enter secret to verify (optional for HS256/384/512)"
+                />
+                
+                @if (verifySignature()) {
+                  <div class="text-sm font-semibold rounded-lg p-3"
+                    [class.bg-emerald-50]="verifySignature()?.status === 'valid'" [class.text-emerald-700]="verifySignature()?.status === 'valid'"
+                    [class.bg-red-50]="verifySignature()?.status === 'invalid'" [class.text-red-700]="verifySignature()?.status === 'invalid'"
+                    [class.bg-amber-50]="verifySignature()?.status === 'unsupported'" [class.text-amber-700]="verifySignature()?.status === 'unsupported'"
+                  >
+                    {{ verifySignature()?.message }}
+                  </div>
+                }
+              </div>
+
+            </div>
+          } @else {
+            <div class="flex-1 flex items-center justify-center text-slate-400 italic text-sm">
+              Decoded result will appear here
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Left Column: Edit Content -->
+      <div class="flex flex-col gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col gap-4">
+          <!-- Header -->
+          <div>
+            <label class="block text-xs uppercase font-bold text-rose-500 mb-2">Header JSON</label>
+            <textarea
+              [ngModel]="headerJson()"
+              (ngModelChange)="headerJson.set($event)"
+              rows="4"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-rose-500 font-mono text-sm resize-none"
+            ></textarea>
+          </div>
+          
+          <!-- Payload -->
+          <div>
+            <label class="block text-xs uppercase font-bold text-violet-500 mb-2">Payload JSON</label>
+            <textarea
+              [ngModel]="payloadJson()"
+              (ngModelChange)="payloadJson.set($event)"
+              rows="8"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-violet-500 font-mono text-sm resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Secret Key -->
+          <div>
+            <label class="block text-xs uppercase font-bold text-indigo-500 mb-2">Secret Key</label>
+            <input
+              [ngModel]="secretKey()"
+              (ngModelChange)="secretKey.set($event)"
+              type="text"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
+              placeholder="your-256-bit-secret"
+            />
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Right Column: Encoded Result -->
+      <div class="flex flex-col gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-full flex flex-col">
+          <label class="block text-sm font-semibold text-slate-700 mb-3">Generated JWT</label>
+          
+          <div class="flex-1 max-w-full">
+            @if (encodedResult()?.error) {
+              <div class="p-4 bg-red-50 text-red-700 rounded-lg text-sm">
+                {{ encodedResult()?.error }}
+              </div>
+            } @else if (encodedResult()?.token) {
+              <div class="w-full p-4 bg-slate-50 border border-slate-200 rounded-lg font-mono text-sm break-all wrap-break-word">
+                {{ encodedResult()?.token }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>
