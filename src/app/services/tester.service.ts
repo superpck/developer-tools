@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { io } from 'socket.io-client';
 
 export interface RequestParams {
   method: string;
@@ -11,6 +12,7 @@ export interface RequestParams {
   bodyRaw: string;
   formData: { key: string; value: string; enabled: boolean }[];
   urlEncoded: { key: string; value: string; enabled: boolean }[];
+  socketEventName?: string;
 }
 
 export interface HistoryRecord extends RequestParams {
@@ -104,7 +106,167 @@ export class TesterService {
     }
   }
 
+  private isSocketIoMethod(method: string): boolean {
+    return method === 'WS' || method === 'WSS';
+  }
+
+  private buildSocketPayload(params: RequestParams): unknown {
+    const rawPayload = params.bodyRaw.trim();
+
+    if (!rawPayload) {
+      return undefined;
+    }
+
+    try {
+      return JSON.parse(rawPayload);
+    } catch {
+      return rawPayload;
+    }
+  }
+
+  private getSocketTargetUrl(url: string): string {
+    return url.replace(/^ws:/i, 'http:').replace(/^wss:/i, 'https:');
+  }
+
+  private createSocketErrorResponse(error: unknown, startTime: number) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    return {
+      status: 0,
+      statusText: 'Socket Error',
+      time: Math.round(performance.now() - startTime),
+      size: 0,
+      body: message,
+      headers: {}
+    };
+  }
+
+  private async sendSocketIoRequest(params: RequestParams): Promise<any> {
+    const targetUrl = params.url.trim();
+
+    if (!targetUrl) {
+      return {
+        status: 0,
+        statusText: 'Error',
+        time: 0,
+        size: 0,
+        body: 'Socket.IO URL is required.',
+        headers: {}
+      };
+    }
+
+    const startTime = performance.now();
+    const socketUrl = this.getSocketTargetUrl(targetUrl);
+    const socketEventName = params.socketEventName?.trim() || 'message';
+    const payload = this.buildSocketPayload(params);
+    const timeoutMs = 5000;
+    const incomingEvents: Array<{ event: string; args: unknown[] }> = [];
+
+    return new Promise(resolve => {
+      const socket = io(socketUrl, {
+        autoConnect: false,
+        auth: params.bearerToken ? { token: params.bearerToken } : undefined,
+      });
+
+      let settled = false;
+      const finish = (result: any) => {
+        if (settled) {
+          return;
+        }
+
+        settled = true;
+        clearTimeout(timeoutId);
+        socket.offAny(handleAny);
+        socket.disconnect();
+        resolve(result);
+      };
+
+      const handleAny = (event: string, ...args: unknown[]) => {
+        incomingEvents.push({ event, args });
+
+        if (!settled && event !== 'connect' && event !== 'connect_error') {
+          finish({
+            status: 200,
+            statusText: 'Received',
+            time: Math.round(performance.now() - startTime),
+            size: JSON.stringify({ event, args, incomingEvents }).length,
+            body: {
+              connected: true,
+              socketUrl,
+              emittedEvent: socketEventName,
+              emittedPayload: payload,
+              receivedEvent: event,
+              receivedPayload: args,
+              incomingEvents
+            },
+            headers: {
+              transport: 'socket.io',
+              url: socketUrl
+            }
+          });
+        }
+      };
+
+      const timeoutId = setTimeout(() => {
+        finish({
+          status: 200,
+          statusText: 'Connected',
+          time: Math.round(performance.now() - startTime),
+          size: JSON.stringify({ incomingEvents, emittedEvent: socketEventName, emittedPayload: payload }).length,
+          body: {
+            connected: true,
+            socketUrl,
+            emittedEvent: socketEventName,
+            emittedPayload: payload,
+            incomingEvents,
+            timedOut: true
+          },
+          headers: {
+            transport: 'socket.io',
+            url: socketUrl
+          }
+        });
+      }, timeoutMs);
+
+      socket.onAny(handleAny);
+      socket.on('connect', () => {
+        if (payload === undefined) {
+          return;
+        }
+
+        socket.emit(socketEventName, payload, (...ackArgs: unknown[]) => {
+          finish({
+            status: 200,
+            statusText: 'Acknowledged',
+            time: Math.round(performance.now() - startTime),
+            size: JSON.stringify({ ackArgs, incomingEvents, emittedEvent: socketEventName, emittedPayload: payload }).length,
+            body: {
+              connected: true,
+              socketUrl,
+              emittedEvent: socketEventName,
+              emittedPayload: payload,
+              ack: ackArgs,
+              incomingEvents
+            },
+            headers: {
+              transport: 'socket.io',
+              url: socketUrl
+            }
+          });
+        });
+      });
+      socket.on('connect_error', error => {
+        finish(this.createSocketErrorResponse(error, startTime));
+      });
+      socket.connect();
+    });
+  }
+
   async sendRequest(params: RequestParams): Promise<any> {
+    if (this.isSocketIoMethod(params.method)) {
+      return this.sendSocketIoRequest(params);
+    }
+
     console.log('TesterService sending request...', params);
     
     try {

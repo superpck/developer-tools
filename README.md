@@ -7,7 +7,7 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 
 ## 🔥 Features
 
-- **API Request Tool**: Send `GET`, `POST`, `PUT`, `DELETE` requests directly from the app. Supports dynamic headers, authorization (Bearer), and multiple body types (Raw, Form-Data, URL-Encoded).
+- **API Request Tool**: Send `GET`, `POST`, `PUT`, `DELETE` requests directly from the app. Supports dynamic headers, authorization (Bearer), multiple body types (Raw, Form-Data, URL-Encoded), and Socket.IO `WS`/`WSS` testing.
 - **Request Timers & Metrics**: See your response status, precise latency (ms), and size payload easily.
 - **IndexedDB History**: Save payloads and configuration states directly into the browser to easily recall testing parameters. Includes toast notifications on successful actions.
 - **Crypto Tool**: Fast one-way hashing (`MD5`, `SHA1`, `SHA256`, `SHA512`) and two-way encoding/encryption (`Base64`, `AES`).
@@ -18,6 +18,7 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 - [Angular 22](https://angular.dev/) (Standalone Components, Signals & Control flows)
 - [Tailwind CSS v4+](https://tailwindcss.com/)
 - [CryptoJS](https://github.com/brix/crypto-js)
+- [Socket.IO Client](https://socket.io/docs/v4/client-api/)
 - Browser `fetch` API & `IndexedDB`
 
 ## 🛠️ Development server

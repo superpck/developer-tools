@@ -26,6 +26,7 @@ export class SendRequest {
   methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'WS', 'WSS'];
   method = signal('GET');
   url = signal('');
+  socketEventName = signal('message');
 
   activeTab = signal<'auth' | 'headers' | 'body' | 'curl'>('headers');
   responseTab = signal<'body' | 'headers'>('body');
@@ -74,7 +75,8 @@ export class SendRequest {
       bodyType: this.bodyType(),
       bodyRaw: this.bodyRaw(),
       formData: this.formData(),
-      urlEncoded: this.urlEncoded()
+      urlEncoded: this.urlEncoded(),
+      socketEventName: this.socketEventName()
     };
   }
 
@@ -83,6 +85,23 @@ export class SendRequest {
   curlCommand = computed(() => {
     const url = this.url().trim() || 'http://localhost';
     const method = this.method();
+
+    if (method === 'WS' || method === 'WSS') {
+      const socketUrl = url.replace(/^ws:/i, 'http:').replace(/^wss:/i, 'https:');
+      const socketEventName = this.socketEventName().trim() || 'message';
+      const rawBody = this.bodyRaw().trim();
+
+      return [
+        "import { io } from 'socket.io-client';",
+        '',
+        `const socket = io('${socketUrl}');`,
+        `socket.on('connect', () => {`,
+        rawBody ? `  socket.emit('${socketEventName}', JSON.parse(${JSON.stringify(rawBody)}));` : `  socket.emit('${socketEventName}');`,
+        `});`,
+        `socket.onAny((event, ...args) => console.log(event, args));`
+      ].join('\n');
+    }
+
     let cmd = `curl --request ${method} \\\n  --url '${url}'`;
 
     // Headers
@@ -176,6 +195,7 @@ export class SendRequest {
   loadRecord(record: HistoryRecord) {
     this.method.set(record.method);
     this.url.set(record.url);
+    this.socketEventName.set(record.socketEventName || 'message');
     this.headers.set(record.headers && record.headers.length ? record.headers : [{ key: '', value: '', enabled: true }]);
     this.authType.set(record.authType);
     this.bearerToken.set(record.bearerToken || '');
