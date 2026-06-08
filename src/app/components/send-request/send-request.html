@@ -344,8 +344,19 @@
           </div>
           <span class="flex-1 text-sm font-mono text-slate-700 truncate" title="{{ item.url }}">{{ item.url || 'No URL'
             }}</span>
-          <span class="text-xs text-slate-400 hidden sm:block w-36 text-right whitespace-nowrap">{{ item.timestamp |
-            date:'shortTime' }} ({{ item.timestamp | date:'shortDate' }})</span>
+          <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
+            <span class="text-xs text-slate-400 hidden sm:block w-36 text-right whitespace-nowrap">{{ item.timestamp |
+              date:'shortTime' }} ({{ item.timestamp | date:'shortDate' }})</span>
+            <button
+              type="button"
+              (click)="removeHistoryRecord(item, $event)"
+              aria-label="Delete saved request"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
         }
       </div>

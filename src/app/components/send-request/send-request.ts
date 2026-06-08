@@ -155,6 +155,18 @@ export class SendRequest {
     this.showHistory.set(true);
   }
 
+  async removeHistoryRecord(record: HistoryRecord, event?: MouseEvent) {
+    event?.stopPropagation();
+
+    if (record.id === undefined) {
+      return;
+    }
+
+    await this.testerService.deleteRequest(record.id);
+    this.historyList.update(records => records.filter(item => item.id !== record.id));
+    this.showToast('Removed from indexedDB');
+  }
+
   loadRecord(record: HistoryRecord) {
     this.method.set(record.method);
     this.url.set(record.url);
