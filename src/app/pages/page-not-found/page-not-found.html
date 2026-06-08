@@ -1,1 +1,57 @@
-<p>page-not-found works!</p>
+<div class="grow flex flex-col items-center justify-center p-4">
+  <div class="max-w-xl w-full text-center space-y-8">
+    
+    <!-- 404 Status -->
+    <div class="space-y-4">
+      <h1 class="text-9xl font-extrabold text-transparent bg-clip-text bg-linear-to-br from-indigo-500 to-violet-600 drop-shadow-sm">404</h1>
+      <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Oops! Page not found.</h2>
+      <p class="text-slate-600 text-lg">
+        The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+      </p>
+    </div>
+
+    <!-- Layout Menus -->
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 mt-8">
+      <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6">Continue your tools below</h3>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a routerLink="/request" class="group flex flex-col items-center p-4 rounded-2xl hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+          <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <span class="font-semibold text-slate-700 group-hover:text-indigo-700">API Request</span>
+        </a>
+        
+        <a routerLink="/crypto" class="group flex flex-col items-center p-4 rounded-2xl hover:bg-violet-50 transition-colors border border-transparent hover:border-violet-100">
+          <div class="w-12 h-12 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <span class="font-semibold text-slate-700 group-hover:text-violet-700">Crypto Tool</span>
+        </a>
+        
+        <a routerLink="/jwt" class="group flex flex-col items-center p-4 rounded-2xl hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-100">
+          <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </div>
+          <span class="font-semibold text-slate-700 group-hover:text-rose-700">JWT Tool</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="pt-6">
+      <a routerLink="/" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-all font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to Home
+      </a>
+    </div>
+
+  </div>
+</div>

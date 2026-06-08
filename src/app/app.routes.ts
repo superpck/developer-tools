@@ -26,8 +26,8 @@ export const routes: Routes = [
       {
         path: 'jwt',
         loadComponent: () => import('./components/jwt-tool/jwt-tool').then(m => m.JwtTool)
-      }
+      },
+      { path: '**', component: PageNotFound }
     ]
-  },
-  { path: '**', component: PageNotFound }
+  }
 ];
