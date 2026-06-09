@@ -1,0 +1,2 @@
+var r="1.2.0",t="2026.06.08-1";var i={appName:"Developer tools",appCode:"tools@dev",appDescribe:"Developer tools for development and testing",version:r,subVersion:t,production:true,link:{github:"https://github.com/superpck/developer-tools"}};
+export{i};
