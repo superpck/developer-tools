@@ -1,8 +1,10 @@
-<main class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 py-20 selection:bg-indigo-100 selection:text-indigo-900">
+<main
+  class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 py-20 selection:bg-indigo-100 selection:text-indigo-900">
   <div class="max-w-5xl mx-auto text-center space-y-12">
     <!-- Header -->
     <div class="space-y-6">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-medium mb-4">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-medium mb-4">
         <span class="relative flex h-2 w-2">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
@@ -10,7 +12,7 @@
         {{ config.appName }} v{{ config.version }} - {{ config.subVersion }}
       </div>
       <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-tight">
-        Simplify Your API <br class="hidden md:block"/>
+        Simplify Your API <br class="hidden md:block" />
         <span class="text-transparent bg-clip-text bg-linear-to-r from-indigo-600 to-violet-600">Testing Workflow</span>
       </h1>
       <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
@@ -20,40 +22,54 @@
 
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 flex-wrap">
-      <a
-        routerLink="/request"
-        class="rounded-full px-8 py-4 bg-indigo-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)] w-full sm:w-auto md:w-56 group"
-      >
+      <a routerLink="/request"
+        class="rounded-full px-8 py-4 bg-indigo-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)] w-full sm:w-auto md:w-56 group">
         API Request
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+          viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
         </svg>
       </a>
-      <a
-        routerLink="/crypto"
-        class="rounded-full px-8 py-4 bg-violet-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-violet-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(139,92,246,0.5)] w-full sm:w-auto md:w-56 group"
-      >
+      <a routerLink="/crypto"
+        class="rounded-full px-8 py-4 bg-violet-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-violet-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(139,92,246,0.5)] w-full sm:w-auto md:w-56 group">
         Crypto Tool
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+          viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
         </svg>
       </a>
-      <a
-        routerLink="/jwt"
-        class="rounded-full px-8 py-4 bg-rose-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-rose-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(225,29,72,0.5)] w-full sm:w-auto md:w-56 group"
-      >
+      <a routerLink="/jwt"
+        class="rounded-full px-8 py-4 bg-rose-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-rose-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(225,29,72,0.5)] w-full sm:w-auto md:w-56 group">
         JWT Tool
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+          viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
         </svg>
       </a>
-      <a
-        href="{{ config.link.github }}"
-        target="_blank"
-        class="rounded-full px-8 py-4 bg-white text-slate-700 border border-slate-200 font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all w-full sm:w-auto md:w-56"
-      >
+
+      <a routerLink="/symbols"
+        class="rounded-full px-8 py-4 bg-yellow-600 text-white font-semibold flex items-center justify-center gap-2 hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(225,29,72,0.5)] w-full sm:w-auto md:w-56 group">
+        Symbol Tool
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+          viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
+        </svg>
+      </a>
+
+      <a href="{{ config.link.github }}" target="_blank"
+        class="rounded-full px-8 py-4 bg-white text-slate-700 border border-slate-200 font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all w-full sm:w-auto md:w-56">
         <svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-          <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+          <path fill-rule="evenodd"
+            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+            clip-rule="evenodd" />
         </svg>
         GitHub
       </a>
@@ -61,48 +77,60 @@
 
     <!-- Feature Highlights -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16">
-      
+
       <!-- Feature 1 -->
-      <div class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
-        <div class="w-14 h-14 rounded-2xl bg-indigo-50/80 flex items-center justify-center mb-6 text-indigo-600 group-hover:scale-110 transition-transform">
+      <div
+        class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
+        <div
+          class="w-14 h-14 rounded-2xl bg-indigo-50/80 flex items-center justify-center mb-6 text-indigo-600 group-hover:scale-110 transition-transform">
           <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
         <h3 class="text-xl font-bold text-slate-900 mb-2">Lightning Fast</h3>
-        <p class="text-slate-600 leading-relaxed">Built with Angular's latest signal-based reactivity for instant interactions and zero lag.</p>
+        <p class="text-slate-600 leading-relaxed">Built with Angular's latest signal-based reactivity for instant
+          interactions and zero lag.</p>
       </div>
 
       <!-- Feature 2 -->
-      <div class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
-        <div class="w-14 h-14 rounded-2xl bg-violet-50/80 flex items-center justify-center mb-6 text-violet-600 group-hover:scale-110 transition-transform">
+      <div
+        class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
+        <div
+          class="w-14 h-14 rounded-2xl bg-violet-50/80 flex items-center justify-center mb-6 text-violet-600 group-hover:scale-110 transition-transform">
           <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
         <h3 class="text-xl font-bold text-slate-900 mb-2">Secure & Private</h3>
-        <p class="text-slate-600 leading-relaxed">All requests run directly in your browser. No middleman servers touching your sensitive data.</p>
+        <p class="text-slate-600 leading-relaxed">All requests run directly in your browser. No middleman servers
+          touching your sensitive data.</p>
       </div>
 
       <!-- Feature 3 -->
-      <div class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
-        <div class="w-14 h-14 rounded-2xl bg-blue-50/80 flex items-center justify-center mb-6 text-blue-600 group-hover:scale-110 transition-transform">
+      <div
+        class="p-8 bg-white rounded-3xl shadow-sm border border-slate-100/50 text-left hover:shadow-md transition-shadow group">
+        <div
+          class="w-14 h-14 rounded-2xl bg-blue-50/80 flex items-center justify-center mb-6 text-blue-600 group-hover:scale-110 transition-transform">
           <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </div>
         <h3 class="text-xl font-bold text-slate-900 mb-2">Modern UI</h3>
-        <p class="text-slate-600 leading-relaxed">A clean, focused interface crafted with Tailwind CSS that makes debugging APIs enjoyable.</p>
+        <p class="text-slate-600 leading-relaxed">A clean, focused interface crafted with Tailwind CSS that makes
+          debugging APIs enjoyable.</p>
       </div>
 
     </div>
 
     <footer class="w-full pt-10 md:pt-14">
-      <div class="rounded-3xl border border-slate-200/80 bg-white/80 backdrop-blur-md px-6 py-5 shadow-sm md:px-8 md:py-6">
+      <div
+        class="rounded-3xl border border-slate-200/80 bg-white/80 backdrop-blur-md px-6 py-5 shadow-sm md:px-8 md:py-6">
         <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div class="space-y-2 text-left">
             <div class="flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-linear-to-r from-indigo-500 to-violet-500 shadow-sm"></span>
+              <span
+                class="inline-flex h-2.5 w-2.5 rounded-full bg-linear-to-r from-indigo-500 to-violet-500 shadow-sm"></span>
               {{ config.appName }}
             </div>
             <p class="max-w-xl text-sm leading-6 text-slate-500">
