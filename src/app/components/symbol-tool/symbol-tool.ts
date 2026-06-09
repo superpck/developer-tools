@@ -77,7 +77,7 @@ export class SymbolTool implements OnInit {
   async ngOnInit() {
     // อักษรสำหรับ HTML
     const favoriteArray = Array.from(this.favoriteSymbols.replace(/\s/g, ''));
-    this.favoriteSymbols = favoriteArray;
+    this.favoriteSymbols = favoriteArray.filter((sym, index) => favoriteArray.indexOf(sym) === index); // Remove duplicates
 
     this.symbolCharacters.forEach(category => {
       if (category.range.length == 2) {
