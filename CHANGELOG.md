@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] (Build 2026.06.08-1) - 2026-06-08
+## [1.3.0] (Build 2026.08.03-1) - 2026-08-03
+
+### Added
+- **Text Formatter**: Pretty-print `JSON`, `XML`, `HTML`, and `URL query strings` using built-in browser APIs only (no external libraries).
+- **CSV to Table**: Paste CSV and preview as an interactive table. Supports custom delimiters (`,` `;` tab `|`), quoted fields, and Markdown table export.
+- **Markdown Viewer**: Live split-pane editor with rendered preview. Supports headings, bold, italic, code blocks, blockquotes, ordered/unordered lists, links, images, and horizontal rules — no external parser library.
+
+### Changed
+- Upgraded Angular to v22.1 and all related dependencies.
+- Migrated Tailwind CSS v3 utility classes (`flex-shrink-0`, `flex-grow`) to v4 equivalents (`shrink-0`, `grow`).
+- Navigation bar and Home page updated to include links to all new tools.
+
+
 
 ### Added
 - Optional request descriptions when saving history entries.
