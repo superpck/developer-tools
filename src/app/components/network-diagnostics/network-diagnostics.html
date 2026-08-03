@@ -1,0 +1,229 @@
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-4 text-slate-800 md:px-6 md:py-8">
+  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-200 bg-linear-to-r from-emerald-50 via-white to-cyan-50 p-5 md:p-6">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-700">Network diagnostics</p>
+          <h1 class="text-3xl font-bold text-slate-950 md:text-4xl">Probe a URL from the browser</h1>
+          <p class="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+            Check HTTP reachability, iframe embed behavior, and optional backend diagnostics in one place.
+          </p>
+        </div>
+
+        <div [class]="'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ' + severityClasses()">
+          <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current"></span>
+          {{ severityLabel() }}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-4 p-5 md:p-6 xl:grid-cols-[1.4fr_0.9fr]">
+      <div class="space-y-4">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <label class="mb-2 block text-sm font-semibold text-slate-700">Target URL</label>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="url"
+              [ngModel]="url()"
+              (ngModelChange)="url.set($event)"
+              placeholder="https://example.com"
+              class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 font-mono text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            />
+            <button
+              type="button"
+              (click)="runDiagnostics()"
+              [disabled]="running()"
+              class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {{ running() ? 'Running...' : 'Run diagnostics' }}
+            </button>
+          </div>
+          <p class="mt-2 text-xs text-slate-500">
+            The iframe probe uses a hidden frame so you can test embeddability without leaving the page.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="toggleAdvanced()"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+        >
+          <span class="text-base">{{ showAdvanced() ? '▾' : '▸' }}</span>
+          Advanced options
+        </button>
+
+        @if (showAdvanced()) {
+          <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-2">
+            <label class="space-y-2">
+              <span class="block text-sm font-semibold text-slate-700">Timeout (ms)</span>
+              <input
+                type="number"
+                min="1000"
+                max="30000"
+                step="500"
+                [ngModel]="timeoutMs()"
+                (ngModelChange)="timeoutMs.set($event)"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+              />
+            </label>
+
+            <label class="space-y-2">
+              <span class="block text-sm font-semibold text-slate-700">Optional backend endpoint</span>
+              <input
+                type="url"
+                [ngModel]="backendEndpoint()"
+                (ngModelChange)="backendEndpoint.set($event)"
+                placeholder="https://api.example.com/network-diagnostics"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+              />
+            </label>
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        @if (hasResult()) {
+          <div class="grid gap-4 lg:grid-cols-3">
+            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">HTTP probe</p>
+              <div class="mt-2 flex items-baseline gap-2">
+                <span class="text-xl font-bold text-slate-950">{{ httpProbe()?.outcome }}</span>
+                <span class="text-sm text-slate-500">{{ httpProbe()?.elapsedMs }} ms</span>
+              </div>
+              <p class="mt-2 text-sm leading-6 text-slate-600">{{ httpProbe()?.note }}</p>
+            </article>
+
+            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Iframe probe</p>
+              <div class="mt-2 flex items-baseline gap-2">
+                <span class="text-xl font-bold text-slate-950">{{ iframeProbe()?.outcome }}</span>
+                <span class="text-sm text-slate-500">{{ iframeProbe()?.elapsedMs }} ms</span>
+              </div>
+              <p class="mt-2 text-sm leading-6 text-slate-600">{{ iframeProbe()?.note }}</p>
+            </article>
+
+            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Backend probe</p>
+              <div class="mt-2 flex items-baseline gap-2">
+                <span class="text-xl font-bold text-slate-950">{{ backendProbe()?.outcome }}</span>
+                <span class="text-sm text-slate-500">{{ backendProbe()?.elapsedMs }} ms</span>
+              </div>
+              <p class="mt-2 text-sm leading-6 text-slate-600">{{ backendProbe()?.note }}</p>
+            </article>
+          </div>
+        }
+      </div>
+
+      <aside class="space-y-4">
+        <div class="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-slate-100 shadow-sm">
+          <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+            <span class="text-sm font-semibold text-slate-200">Summary</span>
+            @if (result()) {
+              <span class="text-xs font-mono text-slate-400">{{ result()?.timeoutMs }} ms timeout</span>
+            }
+          </div>
+
+          @if (result()) {
+            <div class="space-y-3 py-4">
+              <p class="text-sm leading-6 text-slate-200">{{ result()?.summary }}</p>
+              <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
+                <dt class="text-slate-400">Started</dt>
+                <dd class="font-mono text-slate-100">{{ result()?.startedAt }}</dd>
+                <dt class="text-slate-400">Finished</dt>
+                <dd class="font-mono text-slate-100">{{ result()?.finishedAt }}</dd>
+                <dt class="text-slate-400">Target</dt>
+                <dd class="font-mono text-slate-100 break-all">{{ result()?.inputUrl }}</dd>
+              </dl>
+            </div>
+          } @else {
+            <p class="py-4 text-sm leading-6 text-slate-300">
+              Run a diagnostics pass to see the reachability summary, iframe result, and HTTP timing.
+            </p>
+          }
+        </div>
+
+        @if (hasResult()) {
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 class="text-sm font-semibold text-slate-900">HTTP details</h2>
+            <dl class="mt-3 space-y-2 text-sm">
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Status</dt>
+                <dd class="font-mono text-slate-900">{{ httpProbe()?.status ?? '—' }} {{ httpProbe()?.statusText ?? '' }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Final URL</dt>
+                <dd class="font-mono text-slate-900 break-all">{{ httpProbe()?.finalUrl ?? '—' }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Redirected</dt>
+                <dd class="font-mono text-slate-900">{{ httpProbe()?.redirected ? 'Yes' : 'No' }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Error</dt>
+                <dd class="font-mono text-slate-900 break-all">{{ httpProbe()?.errorMessage ?? '—' }}</dd>
+              </div>
+            </dl>
+
+            <div class="mt-4 rounded-xl bg-slate-50 p-3">
+              <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Response headers</p>
+              @if (httpHeadersJson()) {
+                <pre class="overflow-x-auto text-xs leading-5 text-slate-700">{{ httpHeadersJson() }}</pre>
+              } @else {
+                <p class="text-sm text-slate-500">No response headers were exposed to the browser.</p>
+              }
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 class="text-sm font-semibold text-slate-900">Iframe details</h2>
+            <dl class="mt-3 space-y-2 text-sm">
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Outcome</dt>
+                <dd class="font-mono text-slate-900">{{ iframeProbe()?.outcome }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Embeddable</dt>
+                <dd class="font-mono text-slate-900">{{ iframeProbe()?.embeddable === null ? 'Unknown' : iframeProbe()?.embeddable ? 'Yes' : 'No' }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Title</dt>
+                <dd class="font-mono text-slate-900 break-all">{{ iframeProbe()?.title ?? '—' }}</dd>
+              </div>
+              <div class="flex items-start justify-between gap-4">
+                <dt class="text-slate-500">Error</dt>
+                <dd class="font-mono text-slate-900 break-all">{{ iframeProbe()?.errorMessage ?? '—' }}</dd>
+              </div>
+            </dl>
+          </div>
+
+          @if (backendProbe()?.outcome !== 'skipped') {
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <h2 class="text-sm font-semibold text-slate-900">Backend details</h2>
+              <dl class="mt-3 space-y-2 text-sm">
+                <div class="flex items-start justify-between gap-4">
+                  <dt class="text-slate-500">Endpoint</dt>
+                  <dd class="font-mono text-slate-900 break-all">{{ backendProbe()?.endpoint ?? '—' }}</dd>
+                </div>
+                <div class="flex items-start justify-between gap-4">
+                  <dt class="text-slate-500">Error</dt>
+                  <dd class="font-mono text-slate-900 break-all">{{ backendProbe()?.errorMessage ?? '—' }}</dd>
+                </div>
+              </dl>
+
+              <div class="mt-4 rounded-xl bg-slate-50 p-3">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Payload</p>
+                <pre class="overflow-x-auto text-xs leading-5 text-slate-700">{{ backendPayloadJson() }}</pre>
+              </div>
+            </div>
+          }
+        }
+      </aside>
+    </div>
+  </section>
+
+  <div #iframeHost class="pointer-events-none absolute top-0 h-px w-px overflow-hidden" style="left: -99999px;" aria-hidden="true"></div>
+</div>
