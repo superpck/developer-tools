@@ -3,7 +3,7 @@
 **Version:** 1.2.0  
 **Build:** 2026.06.08-1
 
-A modern, fast, and intuitive web application built with Angular and Tailwind CSS to construct, send, and analyze HTTP requests directly from your browser. It also includes built-in developer tools like Cryptography utilities and a JWT visualizer.
+A modern, fast, and intuitive web application built with Angular and Tailwind CSS. A collection of everyday developer utilities — all running in the browser with no backend required.
 
 ## 🔥 Features
 
@@ -12,6 +12,11 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 - **IndexedDB History**: Save payloads and configuration states directly into the browser to easily recall testing parameters. Includes toast notifications on successful actions.
 - **Crypto Tool**: Fast one-way hashing (`MD5`, `SHA1`, `SHA256`, `SHA512`) and two-way encoding/encryption (`Base64`, `AES`).
 - **JWT Tool**: Seamlessly Decode, Encode, and verify JSON Web Tokens (supporting `HS256`, `HS384`, `HS512` structures) through a side-by-side graphical interface.
+- **Text Formatter**: Beautify and pretty-print `JSON`, `XML`, `HTML`, and `URL query strings` — no external libraries, built-in only.
+- **CSV to Table**: Paste CSV data and preview it as an interactive table. Supports custom delimiters (`,` `;` `tab` `|`) and quoted fields. Export as Markdown table.
+- **Markdown Viewer**: Live split-pane Markdown editor with rendered preview. Supports headings, bold, italic, code blocks, blockquotes, lists, links, and images.
+- **Network Diagnostics**: Browser-side network utility tools.
+- **Symbol Tool**: Quick reference for common Unicode symbols.
 
 ## 🚀 Tech Stack
 
