@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] (Build 2026.10.02-1) - 2026-10-02
+
+### Added
+- **Text Formatter**: SQL beautifier added alongside JSON/XML/HTML/URL Params — formats `SELECT`, `JOIN`, `WHERE`/`AND`/`OR`, `GROUP BY`/`ORDER BY`, subqueries, and `INSERT`/`VALUES` statements using a built-in tokenizer, no external library.
+
 ## [1.3.0] (Build 2026.08.03-1) - 2026-08-03
 
 ### Added
