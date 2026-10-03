@@ -36,6 +36,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/network-diagnostics/network-diagnostics').then(m => m.NetworkDiagnostics)
       },
       {
+        path: 'subnet',
+        loadComponent: () => import('./components/subnet-calculator/subnet-calculator').then(m => m.SubnetCalculator)
+      },
+      {
         path: 'json-xml-formatted',
         loadComponent: () => import('./components/json-xml-formatted/json-xml-formatted').then(m => m.JsonXmlFormatted)
       },

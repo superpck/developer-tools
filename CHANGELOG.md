@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] (Build 2026.10.03-1) - 2026-10-03
+
+### Added
+- **Subnet Calculator**: Calculate IPv4 network/broadcast address, usable host range, wildcard mask, and reverse DNS pointer from an IP plus a CIDR prefix (`24`) or dotted mask (`255.255.255.0`). Classifies the entered address as private, public, loopback, link-local (APIPA), multicast, CGNAT, documentation, benchmarking, and more per IANA special-purpose ranges, plus a built-in CIDR cheat sheet — no external libraries.
+
 ## [1.4.0] (Build 2026.10.02-1) - 2026-10-02
 
 ### Added
