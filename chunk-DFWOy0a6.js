@@ -1,0 +1,1 @@
+var i={appName:`Developer tools`,appCode:`tools@dev`,appDescribe:`Developer tools for development and testing`,version:`1.5.0`,subVersion:`2026.10.03-1`,production:!0,link:{github:`https://github.com/superpck/developer-tools`}};export{i as t};
