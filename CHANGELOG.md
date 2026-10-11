@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] (Build 2026.10.11-1) - 2026-10-11
+
+### Added
+- **URL Checking**: Pre-release testing tool for an API endpoint — burst/rate-limit detection (capped request count and concurrency to avoid accidentally overloading a production service), common injection payload testing (XSS, SQL injection, path traversal, command injection, CRLF/header injection, open redirect) via auto-detected query parameters or an explicit `{{payload}}` placeholder, a CORS configuration check, and a recommended security response-headers check. Available at `/url-checking` (not yet linked from the home page).
+- Consolidated, severity-ranked security recommendation checklist generated from URL Checking results, plus one-click export of the full report as a Markdown (`.md`) file.
+
 ## [1.5.0] (Build 2026.10.03-1) - 2026-10-03
 
 ### Added

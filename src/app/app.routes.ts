@@ -51,6 +51,10 @@ export const routes: Routes = [
         path: 'markdown',
         loadComponent: () => import('./components/markdown-viewer/markdown-viewer').then(m => m.MarkdownViewer)
       },
+      {
+        path: 'url-checking',
+        loadComponent: () => import('./components/url-checking/url-checking').then(m => m.UrlChecking)
+      },
       { path: '**', component: PageNotFound }
     ]
   }

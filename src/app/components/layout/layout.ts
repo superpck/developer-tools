@@ -6,6 +6,7 @@ import Config from '../../configs/config';
 
 interface ToolLink {
   path: string;
+  group?: string;
   label: string;
   activeClass: string;
 }
@@ -28,15 +29,16 @@ export class Layout {
   readonly currentYear = new Date().getFullYear();
 
   readonly toolLinks: ReadonlyArray<ToolLink> = [
-    { path: '/request', label: 'API Calling', activeClass: 'bg-indigo-50 text-indigo-700' },
-    { path: '/crypto', label: 'Crypto Tool', activeClass: 'bg-violet-50 text-violet-700' },
-    { path: '/jwt', label: 'JWT Tool', activeClass: 'bg-rose-50 text-rose-700' },
-    { path: '/network', label: 'Network: URL Diagnostics', activeClass: 'bg-emerald-50 text-emerald-700' },
-    { path: '/subnet', label: 'Network: Subnet Calculator', activeClass: 'bg-cyan-50 text-cyan-700' },
-    { path: '/json-xml-formatted', label: 'Text: Formatters', activeClass: 'bg-fuchsia-50 text-fuchsia-700' },
-    { path: '/csv-table', label: 'Text: CSV to Table', activeClass: 'bg-teal-50 text-teal-700' },
-    { path: '/markdown', label: 'Text: Markdown viewer', activeClass: 'bg-sky-50 text-sky-700' },
-    { path: '/symbols', label: 'ICON: Symbols', activeClass: 'bg-amber-50 text-amber-700' },
+    { path: '/request', group: 'Testing', label: 'API Calling', activeClass: 'bg-indigo-50 text-indigo-700' },
+    { path: '/crypto', group: 'Encryption', label: 'Crypto Tool', activeClass: 'bg-violet-50 text-violet-700' },
+    { path: '/jwt', group: 'Encryption', label: 'JWT Tool', activeClass: 'bg-rose-50 text-rose-700' },
+    { path: '/network', group: 'Network', label: 'URL Diagnostics', activeClass: 'bg-emerald-50 text-emerald-700' },
+    { path: '/subnet', group: 'Network', label: 'Subnet Calculator', activeClass: 'bg-cyan-50 text-cyan-700' },
+    { path: '/url-checking', group: 'Network', label: 'URL Checking', activeClass: 'bg-cyan-50 text-cyan-700' },
+    { path: '/json-xml-formatted', group: 'Text', label: 'Formatters', activeClass: 'bg-fuchsia-50 text-fuchsia-700' },
+    { path: '/csv-table', group: 'Text', label: 'CSV to Table', activeClass: 'bg-teal-50 text-teal-700' },
+    { path: '/markdown', group: 'Text', label: 'Markdown viewer', activeClass: 'bg-sky-50 text-sky-700' },
+    { path: '/symbols', group: 'Icon', label: 'Symbols', activeClass: 'bg-amber-50 text-amber-700' },
   ];
 
   readonly menuOpen = signal(false);

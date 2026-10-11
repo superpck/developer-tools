@@ -1,0 +1,473 @@
+<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-4 text-slate-800 md:px-6 md:py-8">
+  <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-200 bg-linear-to-r from-rose-50 via-white to-amber-50 p-5 md:p-6">
+      <div class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-rose-700">Pre-release checks</p>
+        <h1 class="text-3xl font-bold text-slate-950 md:text-4xl">URL Checking: rate limit &amp; injection tests</h1>
+        <p class="max-w-3xl text-sm leading-6 text-slate-600 md:text-base">
+          Run quick, browser-based smoke tests against an endpoint before release: burst/rate-limit behavior, common
+          injection payloads, CORS configuration, and recommended security response headers.
+        </p>
+      </div>
+    </div>
+
+    <div class="space-y-4 p-5 md:p-6">
+      <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
+        <strong class="font-semibold">Use responsibly:</strong> only test URLs you own or are authorized to test.
+        Requests run directly in your browser; the rate-limit test is capped at {{ maxRequests }} requests with up to
+        {{ maxConcurrency }} concurrent connections to avoid accidentally overloading a production service.
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <label class="mb-2 block text-sm font-semibold text-slate-700">Target URL</label>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <input
+            type="text"
+            [ngModel]="url()"
+            (ngModelChange)="url.set($event)"
+            placeholder="https://api.example.com/items?id=1 (or use {{ '{{payload}}' }} as an injection placeholder)"
+            class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 font-mono text-sm outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-200"
+          />
+          <button
+            type="button"
+            (click)="runAllChecks()"
+            [disabled]="runningAll()"
+            class="inline-flex items-center justify-center rounded-xl bg-rose-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {{ runningAll() ? 'Running...' : 'Run all checks' }}
+          </button>
+          <button
+            type="button"
+            (click)="exportMarkdown()"
+            [disabled]="!hasAnyResult()"
+            title="Export the results and recommendations so far as a Markdown report"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Export .md
+          </button>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">
+          Query string parameters (e.g. <code>?id=1</code>) are auto-detected as injection targets. Include
+          <code>{{ '{{payload}}' }}</code> anywhere in the URL to control exactly where payloads are inserted instead.
+        </p>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      @if (recommendationChecklist().length) {
+        <div class="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="text-sm font-semibold text-slate-700">Security recommendations before release</p>
+            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+              @if (recommendationCounts().critical) {
+                <span class="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-rose-700">{{ recommendationCounts().critical }} critical</span>
+              }
+              @if (recommendationCounts().warning) {
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-amber-700">{{ recommendationCounts().warning }} should fix</span>
+              }
+              @if (recommendationCounts().info) {
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-sky-700">{{ recommendationCounts().info }} good practice</span>
+              }
+            </div>
+          </div>
+          <ul class="space-y-2">
+            @for (item of recommendationChecklist(); track $index) {
+              <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                <span [class]="'shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ' + recommendationBadgeClass(item.level)">
+                  {{ recommendationLabel(item.level) }}
+                </span>
+                <span class="flex-1 leading-6 text-slate-700">
+                  <span class="font-semibold text-slate-500">[{{ item.source }}]</span> {{ item.message }}
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Tabs -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+        <button type="button" (click)="setTab('loadTest')"
+          [class]="'rounded-full px-4 py-2 text-sm font-semibold transition ' + (activeTab() === 'loadTest' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')">
+          Rate limit &amp; Load
+        </button>
+        <button type="button" (click)="setTab('injection')"
+          [class]="'rounded-full px-4 py-2 text-sm font-semibold transition ' + (activeTab() === 'injection' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')">
+          Injection
+        </button>
+        <button type="button" (click)="setTab('cors')"
+          [class]="'rounded-full px-4 py-2 text-sm font-semibold transition ' + (activeTab() === 'cors' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')">
+          CORS
+        </button>
+        <button type="button" (click)="setTab('securityHeaders')"
+          [class]="'rounded-full px-4 py-2 text-sm font-semibold transition ' + (activeTab() === 'securityHeaders' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')">
+          Security headers
+        </button>
+      </div>
+
+      <!-- Rate limit / Load test -->
+      @if (activeTab() === 'loadTest') {
+        <div class="space-y-4">
+          <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-3">
+            <label class="space-y-2">
+              <span class="block text-sm font-semibold text-slate-700">Total requests (max {{ maxRequests }})</span>
+              <input
+                type="number"
+                min="1"
+                [max]="maxRequests"
+                [ngModel]="totalRequests()"
+                (ngModelChange)="totalRequests.set($event)"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-200"
+              />
+            </label>
+            <label class="space-y-2">
+              <span class="block text-sm font-semibold text-slate-700">Concurrency (max {{ maxConcurrency }})</span>
+              <input
+                type="number"
+                min="1"
+                [max]="maxConcurrency"
+                [ngModel]="concurrency()"
+                (ngModelChange)="concurrency.set($event)"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-200"
+              />
+            </label>
+            <div class="flex items-end">
+              <button
+                type="button"
+                (click)="runLoadTest()"
+                [disabled]="runningLoadTest()"
+                class="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {{ runningLoadTest() ? 'Sending burst...' : 'Run rate limit / load test' }}
+              </button>
+            </div>
+          </div>
+
+          @if (loadTestResult(); as result) {
+            <div class="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div [class]="'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ' + severityBadgeClass(result.severity)">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current"></span>
+                {{ result.summary }}
+              </div>
+
+              @if (result.recommendations.length) {
+                <ul class="space-y-2">
+                  @for (rec of result.recommendations; track $index) {
+                    <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                      <span [class]="'shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ' + recommendationBadgeClass(rec.level)">
+                        {{ recommendationLabel(rec.level) }}
+                      </span>
+                      <span class="flex-1 leading-6 text-slate-700">{{ rec.message }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+
+              <div class="grid grid-cols-2 gap-3 md:grid-cols-5">
+                <div class="rounded-xl border border-slate-200 p-3 text-center">
+                  <p class="text-2xl font-bold text-slate-900">{{ result.successCount }}</p>
+                  <p class="text-xs text-slate-500">Success (2xx)</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 p-3 text-center">
+                  <p class="text-2xl font-bold text-amber-600">{{ result.rateLimitedCount }}</p>
+                  <p class="text-xs text-slate-500">429 Rate limited</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 p-3 text-center">
+                  <p class="text-2xl font-bold text-rose-600">{{ result.serverErrorCount }}</p>
+                  <p class="text-xs text-slate-500">5xx Server errors</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 p-3 text-center">
+                  <p class="text-2xl font-bold text-slate-900">{{ result.clientErrorCount }}</p>
+                  <p class="text-xs text-slate-500">Other 4xx</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 p-3 text-center">
+                  <p class="text-2xl font-bold text-slate-900">{{ result.networkErrorCount }}</p>
+                  <p class="text-xs text-slate-500">Network errors</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 md:grid-cols-6">
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.throughputRps }}</p>
+                  <p class="text-xs text-slate-500">req/sec</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.responseTime.min }}ms</p>
+                  <p class="text-xs text-slate-500">min</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.responseTime.avg }}ms</p>
+                  <p class="text-xs text-slate-500">avg</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.responseTime.p50 }}ms</p>
+                  <p class="text-xs text-slate-500">p50</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.responseTime.p95 }}ms</p>
+                  <p class="text-xs text-slate-500">p95</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-center">
+                  <p class="text-sm font-bold text-slate-900">{{ result.responseTime.max }}ms</p>
+                  <p class="text-xs text-slate-500">max</p>
+                </div>
+              </div>
+
+              @if (result.rateLimitEvidence.length) {
+                <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p class="mb-1 font-semibold">Rate limit evidence</p>
+                  <ul class="list-inside list-disc space-y-1">
+                    @for (evidence of result.rateLimitEvidence; track evidence) {
+                      <li>{{ evidence }}</li>
+                    }
+                  </ul>
+                </div>
+              }
+
+              <div class="max-h-72 overflow-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs">
+                  <thead class="sticky top-0 bg-slate-100 text-slate-600">
+                    <tr>
+                      <th class="px-3 py-2">#</th>
+                      <th class="px-3 py-2">Status</th>
+                      <th class="px-3 py-2">Elapsed</th>
+                      <th class="px-3 py-2">Error</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (req of result.requests; track req.index) {
+                      <tr class="border-t border-slate-100">
+                        <td class="px-3 py-2">{{ req.index + 1 }}</td>
+                        <td class="px-3 py-2" [class.text-amber-600]="req.status === 429" [class.font-semibold]="req.status === 429">
+                          {{ req.status ?? '—' }}
+                        </td>
+                        <td class="px-3 py-2">{{ req.elapsedMs }}ms</td>
+                        <td class="px-3 py-2 text-rose-600">{{ req.error ?? '' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Injection test -->
+      @if (activeTab() === 'injection') {
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <p class="mb-3 text-sm font-semibold text-slate-700">Categories to test</p>
+            <div class="grid grid-cols-2 gap-2 md:grid-cols-3">
+              @for (option of injectionCategoryOptions; track option.value) {
+                <label class="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedCategories().includes(option.value)"
+                    (change)="toggleCategory(option.value)"
+                    class="h-4 w-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+                  />
+                  {{ option.label }}
+                </label>
+              }
+            </div>
+            @if (usesPlaceholder()) {
+              <p class="mt-3 text-xs text-slate-500">Using the <code>{{ '{{payload}}' }}</code> placeholder found in the URL as the injection point.</p>
+            } @else {
+              <p class="mt-3 text-xs text-slate-500">No placeholder found; every query string parameter in the URL will be tested one at a time.</p>
+            }
+            <button
+              type="button"
+              (click)="runInjectionTest()"
+              [disabled]="runningInjection()"
+              class="mt-4 inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {{ runningInjection() ? 'Testing payloads...' : 'Run injection test' }}
+            </button>
+          </div>
+
+          @if (injectionResult(); as result) {
+            <div class="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div [class]="'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ' + severityBadgeClass(result.severity)">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current"></span>
+                {{ result.summary }}
+              </div>
+
+              @if (result.recommendations.length) {
+                <ul class="space-y-2">
+                  @for (rec of result.recommendations; track $index) {
+                    <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                      <span [class]="'shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ' + recommendationBadgeClass(rec.level)">
+                        {{ recommendationLabel(rec.level) }}
+                      </span>
+                      <span class="flex-1 leading-6 text-slate-700">{{ rec.message }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (result.findings.length) {
+                <div class="max-h-96 overflow-auto rounded-xl border border-slate-200">
+                  <table class="w-full text-left text-xs">
+                    <thead class="sticky top-0 bg-slate-100 text-slate-600">
+                      <tr>
+                        <th class="px-3 py-2">Category</th>
+                        <th class="px-3 py-2">Target</th>
+                        <th class="px-3 py-2">Payload</th>
+                        <th class="px-3 py-2">Status</th>
+                        <th class="px-3 py-2">Elapsed</th>
+                        <th class="px-3 py-2">Evidence</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (finding of result.findings; track $index) {
+                        <tr class="border-t border-slate-100" [class.bg-rose-50]="finding.suspicious">
+                          <td class="px-3 py-2 font-medium text-slate-700">{{ finding.category }}</td>
+                          <td class="px-3 py-2 font-mono">{{ finding.target }}</td>
+                          <td class="max-w-[12rem] truncate px-3 py-2 font-mono" [title]="finding.payload">{{ finding.payload }}</td>
+                          <td class="px-3 py-2">{{ finding.status ?? '—' }}</td>
+                          <td class="px-3 py-2">{{ finding.elapsedMs }}ms</td>
+                          <td class="px-3 py-2" [class.font-semibold]="finding.suspicious" [class.text-rose-700]="finding.suspicious">
+                            {{ finding.evidence }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- CORS check -->
+      @if (activeTab() === 'cors') {
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <button
+              type="button"
+              (click)="runCorsCheck()"
+              [disabled]="runningCors()"
+              class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {{ runningCors() ? 'Checking...' : 'Run CORS check' }}
+            </button>
+          </div>
+
+          @if (corsResult(); as result) {
+            <div class="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div [class]="'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ' + severityBadgeClass(result.severity)">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current"></span>
+                {{ result.summary }}
+              </div>
+
+              @if (result.recommendations.length) {
+                <ul class="space-y-2">
+                  @for (rec of result.recommendations; track $index) {
+                    <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                      <span [class]="'shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ' + recommendationBadgeClass(rec.level)">
+                        {{ recommendationLabel(rec.level) }}
+                      </span>
+                      <span class="flex-1 leading-6 text-slate-700">{{ rec.message }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+
+              <div class="grid gap-3 md:grid-cols-2">
+                <div class="rounded-xl bg-slate-50 p-3 text-sm">
+                  <p class="text-xs font-semibold uppercase text-slate-500">Access-Control-Allow-Origin</p>
+                  <p class="font-mono">{{ result.allowOrigin ?? 'not exposed' }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-sm">
+                  <p class="text-xs font-semibold uppercase text-slate-500">Access-Control-Allow-Credentials</p>
+                  <p class="font-mono">{{ result.allowCredentials ?? 'not exposed' }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-sm">
+                  <p class="text-xs font-semibold uppercase text-slate-500">Access-Control-Allow-Methods</p>
+                  <p class="font-mono">{{ result.allowMethods ?? 'not exposed' }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-3 text-sm">
+                  <p class="text-xs font-semibold uppercase text-slate-500">Access-Control-Allow-Headers</p>
+                  <p class="font-mono">{{ result.allowHeaders ?? 'not exposed' }}</p>
+                </div>
+              </div>
+
+              @if (result.wildcardWithCredentials) {
+                <div class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm font-medium text-rose-700">
+                  Insecure CORS configuration: wildcard origin combined with allow-credentials.
+                </div>
+              }
+
+              <p class="text-xs text-slate-500">{{ result.note }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Security headers check -->
+      @if (activeTab() === 'securityHeaders') {
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <button
+              type="button"
+              (click)="runSecurityHeadersCheck()"
+              [disabled]="runningSecurityHeaders()"
+              class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {{ runningSecurityHeaders() ? 'Checking...' : 'Run security headers check' }}
+            </button>
+          </div>
+
+          @if (securityHeadersResult(); as result) {
+            <div class="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div [class]="'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ' + severityBadgeClass(result.severity)">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current"></span>
+                {{ result.summary }}
+              </div>
+
+              @if (result.recommendations.length) {
+                <ul class="space-y-2">
+                  @for (rec of result.recommendations; track $index) {
+                    <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                      <span [class]="'shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-semibold ' + recommendationBadgeClass(rec.level)">
+                        {{ recommendationLabel(rec.level) }}
+                      </span>
+                      <span class="flex-1 leading-6 text-slate-700">{{ rec.message }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+
+              <div class="overflow-hidden rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100 text-slate-600">
+                    <tr>
+                      <th class="px-3 py-2">Header</th>
+                      <th class="px-3 py-2">Value</th>
+                      <th class="px-3 py-2">Recommendation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (header of result.headers; track header.name) {
+                      <tr class="border-t border-slate-100" [class.bg-amber-50]="!header.present">
+                        <td class="px-3 py-2 font-mono font-medium text-slate-700">{{ header.name }}</td>
+                        <td class="px-3 py-2 font-mono">{{ header.value ?? 'missing' }}</td>
+                        <td class="px-3 py-2 text-slate-600">{{ header.recommendation }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -1,7 +1,7 @@
 # Developer Tools for Web Applications
 
-**Version:** 1.5.0  
-**Build:** 2026.10.03-1
+**Version:** 1.6.0  
+**Build:** 2026.10.11-1
 
 A modern, fast, and intuitive web application built with Angular and Tailwind CSS. A collection of everyday developer utilities — all running in the browser with no backend required.
 
@@ -16,6 +16,7 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 - **CSV to Table**: Paste CSV data and preview it as an interactive table. Supports custom delimiters (`,` `;` `tab` `|`) and quoted fields. Export as Markdown table.
 - **Markdown Viewer**: Live split-pane Markdown editor with rendered preview. Supports headings, bold, italic, code blocks, blockquotes, lists, links, and images.
 - **Network Diagnostics**: Browser-side network utility tools.
+- **URL Checking**: Pre-release testing tool for an endpoint — rate-limit/burst load testing, injection payload testing (XSS, SQLi, path traversal, command injection, CRLF, open redirect), CORS configuration check, and recommended security headers check. Produces a prioritized security recommendation checklist and exports the full report as Markdown. Available at `/url-checking`.
 - **Subnet Calculator**: Calculate IPv4 network/broadcast address, usable host range, and host counts from an IP plus a CIDR prefix (`24`) or dotted mask (`255.255.255.0`). Also classifies the address as private, public, loopback, link-local, multicast, CGNAT, documentation, and more — no external libraries.
 - **Symbol Tool**: Quick reference for common Unicode symbols.
 
