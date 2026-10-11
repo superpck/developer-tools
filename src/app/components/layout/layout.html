@@ -2,20 +2,22 @@
   <!-- Fixed Top Navigation -->
   <nav class="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-sm">
     <div class="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-      <a routerLink="/"
-        class="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-indigo-600 to-violet-600 hover:opacity-80 transition-opacity">
-        {{ config.appName }}
-      </a>
+      <div class="flex gap-2 text-indigo-600 items-center">
+
+        <!-- create svg cog / gear icon -->
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0-6c-1.1 0-2 .9-2 2v1.07c-.61.18-1.18.45-1.7.8l-.76-.76a2 2 0 00-2.83 2.83l.76.76c-.35.52-.62 1.09-.8 1.7H4c-1.1 0-2 .9-2 2s.9 2 2 2h1.07c.18.61.45 1.18.8 1.7l-.76.76a2 2 0 002.83 2.83l.76-.76c.52.35 1.09.62 1.7.8V20c0 1.1.9 2 2 2s2-.9 2-2v-1.07c.61-.18 1.18-.45 1.7-.8l.76.76a2 2 0 002.83-2.83l-.76-.76c.35-.52.62-1.09.8-1.7H20c1.1 0 2-.9 2-2s-.9-2-2-2h-1.07c-.18-.61-.45-1.18-.8-1.7l.76-.76a2 2 0 00-2.83-2.83l-.76.76c-.52-.35-1.09-.62-1.7-.8V4c0-1.1-.9-2-2-2z" />
+        </svg>
+
+        <a routerLink="/"
+          class="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-indigo-600 to-violet-600 hover:opacity-80 transition-opacity">
+          {{ config.appName }} {{ config.version }}
+        </a>
+      </div>
 
       <div class="relative">
         <button type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-controls="tools-menu"
           class="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-            aria-hidden="true">
-            <path fill-rule="evenodd"
-              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-              clip-rule="evenodd" />
-          </svg>
           <span class="whitespace-nowrap">{{ activeLabel() }}</span>
           <svg xmlns="http://www.w3.org/2000/svg"
             [class]="'h-4 w-4 transition-transform ' + (menuOpen() ? 'rotate-180' : '')" viewBox="0 0 20 20"
@@ -31,9 +33,9 @@
           class="absolute right-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-lg sm:w-72">
           @for (link of toolLinks; track link.path) {
           <div
-            class="flex justify-between items-center rounded-md px-3 py-1 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
-            <a [routerLink]="link.path" [routerLinkActive]="link.activeClass" (click)="closeMenu()"
-              class="px-2 text-md text">
+            class="flex justify-between items-center rounded-md px-3 py-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            [routerLinkActive]="link.activeClass">
+            <a [routerLink]="link.path" (click)="closeMenu()" class="px-2 text-sm text-slate-700">
               {{ link.label }}
             </a>
             <span class="text-xs text-gray-400">{{ link.group }}</span>
@@ -50,32 +52,30 @@
     <router-outlet></router-outlet>
   </main>
 
-  <footer class="border-t border-slate-200/80 bg-white/80 backdrop-blur-md">
-    <div
-      class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <div class="space-y-1">
-        <div class="flex items-center gap-2 text-sm font-semibold text-slate-900">
-          <span
-            class="inline-flex h-2.5 w-2.5 rounded-full bg-linear-to-r from-indigo-500 to-violet-500 shadow-sm"></span>
-          {{ config.appName }}
-        </div>
-        <p class="text-sm leading-6 text-slate-500">
-          Tools for API requests, crypto, JWT, and symbols in one focused workspace.
-        </p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
-        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
-          <a href="{{ config.link.github }}" target="_blank" title="visit github">
-            <svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
-              <path fill-rule="evenodd"
-                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                clip-rule="evenodd" />
-            </svg>
-          </a>
+  <footer
+    class="border-t bottom-0 sticky border-slate-200/80 bg-white/80 backdrop-blur-md flex items-center justify-between px-10 py-2">
+    <div class="space-y-1">
+      <p class="flex items-start gap-1.5 text-sm leading-6 text-amber-700" role="note">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor"
+          aria-hidden="true">
+          <path fill-rule="evenodd"
+            d="M8.257 3.099c.765-1.36 2.72-1.36 3.486 0l6.517 11.59c.75 1.334-.213 2.98-1.743 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98l6.517-11.59zM10 7a1 1 0 00-1 1v3a1 1 0 102 0V8a1 1 0 00-1-1zm0 7a1 1 0 100 2 1 1 0 000-2z"
+            clip-rule="evenodd" />
+        </svg>
+        <span class="text-xs leading-5 text-amber-700">
+          <strong class="font-semibold">Disclaimer:</strong> These tools are provided "as is" with no guarantee of
+          accuracy or results. Use at your own risk — we accept no legal liability for any damage, loss, or
+          consequences arising from their use.
         </span>
-        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">{{ currentYear }}</span>
-      </div>
+      </p>
     </div>
+
+    <a href="{{ config.link.github }}" target="_blank" title="visit github" class="text-slate-500">
+      <svg fill="currentColor" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+        <path fill-rule="evenodd"
+          d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+          clip-rule="evenodd" />
+      </svg>
+    </a>
   </footer>
 </div>
