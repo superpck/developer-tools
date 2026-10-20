@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] (Build 2026.10.21-1) - 2026-10-21
+
+### Added
+- **Check Digit / MOD Algorithms in Crypto Tool**: Comprehensive Check Digit computation and validation suite supporting all major industrial, banking, identity, and barcode checksum standards:
+  - **MOD 10**: Luhn algorithm (ISO/IEC 7812: Credit Cards, IMEI), GS1/EAN/UPC (Weight 3, 1), Weighted 2, 1, and custom weights.
+  - **MOD 11**: Bank / Bill Payment cyclic weights 2-7 (Bank of Thailand BOT Ref 1 / Ref 2 standard), Thai National ID (13-digit citizen ID), ISBN-10 (weights 10 down to 2), custom weights, and configurable remainder 10 handling (map to `'0'`, `'X'`, or strict error).
+  - **MOD 97**: ISO 7064 MOD 97-10 (IBAN, ISO 11649 Creditor Reference) and simple modulo 97.
+  - **MOD 7**: Logistics tracking numbers (FedEx, DHL), USPS Money Order, and IATA ticket numbers.
+  - **MOD 23**: Spanish National Identity Number (DNI) letter verification.
+  - **MOD 43**: Code 39 industrial barcode checksum character.
+  - **MOD 47**: Code 93 barcode dual check characters ('C' and 'K').
+  - **MOD 103**: Code 128 barcode symbol check value (Code Sets A, B, and C).
+  - **Verhoeff & Damm Algorithms**: Advanced dihedral group $D_5$ (Indian Aadhaar) and quasigroup table algorithms with 100% detection of adjacent transposition errors.
+- **Check Digit Options & Features**:
+  - Dual action modes: **Generate** (calculate and append check digit) and **Validate** (verify existing numbers with check digit).
+  - Output formats: **Detailed Breakdown** (with weights, sum, and step-by-step arithmetic), **Check Digit Only**, and **Full Appended String**.
+  - Multi-line batch processing for calculating or validating multiple entries at once.
+  - Clean input toggle to automatically ignore spaces and hyphens.
+  - One-click copy result to clipboard.
+
 ## [1.6.0] (Build 2026.10.11-1) - 2026-10-11
 
 ### Added

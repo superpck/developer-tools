@@ -1,11 +1,11 @@
 <div class="max-w-6xl mx-auto p-4 md:p-8 text-slate-800 w-full">
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-slate-900 mb-2">Encryption & Hashing Tool</h1>
-    <p class="text-slate-600">Quickly hash, encode, encrypt, or decrypt data securely in the browser.</p>
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Encryption, Hashing & Check Digit Tool</h1>
+    <p class="text-slate-600">Quickly hash, encrypt, or compute and validate Check Digit (MOD 10, MOD 11, MOD 97, etc.) securely in your browser.</p>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Input Section -->
+    <!-- Input & Settings Section -->
     <div class="flex flex-col gap-4">
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
         <label class="block text-sm font-semibold text-slate-700 mb-3">Settings</label>
@@ -13,12 +13,18 @@
         <div class="space-y-4">
           <!-- Operation Type -->
           <div>
-            <label class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Operation</label>
+            <label for="opSelect" class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Operation</label>
             <select
+              id="opSelect"
               [ngModel]="selectedOp()"
               (ngModelChange)="selectedOp.set($event)"
               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
             >
+              <optgroup label="Check Digit / MOD Algorithms">
+                @for (op of modOps; track op) {
+                  <option [value]="op">{{ opDisplayLabels[op] }}</option>
+                }
+              </optgroup>
               <optgroup label="One-Way Hash">
                 @for (op of oneWayOps; track op) {
                   <option [value]="op">{{ op }}</option>
@@ -35,8 +41,9 @@
           <!-- Secret Key for AES -->
           @if (selectedOp().startsWith('AES')) {
             <div class="animate-in fade-in slide-in-from-top-2">
-              <label class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Secret Key</label>
+              <label for="secretKeyInput" class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Secret Key</label>
               <input
+                id="secretKeyInput"
                 type="text"
                 placeholder="Enter secret key for AES..."
                 [ngModel]="secretKey()"
@@ -45,15 +52,193 @@
               />
             </div>
           }
+
+          <!-- Options specific to Check Digit / MOD algorithms -->
+          @if (isModOperation()) {
+            <div class="pt-2 border-t border-slate-100 space-y-4 animate-in fade-in slide-in-from-top-2">
+              <!-- Action: Generate vs Validate -->
+              <div>
+                <label class="block text-xs uppercase tracking-wide text-slate-500 mb-2 font-semibold">Action Mode</label>
+                <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
+                  <button
+                    type="button"
+                    (click)="modAction.set('generate')"
+                    class="py-1.5 px-3 rounded-md text-xs font-medium transition-all"
+                    [class.bg-white]="modAction() === 'generate'"
+                    [class.text-indigo-700]="modAction() === 'generate'"
+                    [class.shadow-sm]="modAction() === 'generate'"
+                    [class.text-slate-600]="modAction() !== 'generate'"
+                  >
+                    Generate
+                  </button>
+                  <button
+                    type="button"
+                    (click)="modAction.set('validate')"
+                    class="py-1.5 px-3 rounded-md text-xs font-medium transition-all"
+                    [class.bg-white]="modAction() === 'validate'"
+                    [class.text-indigo-700]="modAction() === 'validate'"
+                    [class.shadow-sm]="modAction() === 'validate'"
+                    [class.text-slate-600]="modAction() !== 'validate'"
+                  >
+                    Validate
+                  </button>
+                </div>
+              </div>
+
+              <!-- MOD 10 Specific Variants -->
+              @if (selectedOp() === 'MOD10') {
+                <div>
+                  <label for="mod10Select" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">MOD 10 Standard / Algorithm</label>
+                  <select
+                    id="mod10Select"
+                    [ngModel]="mod10Variant()"
+                    (ngModelChange)="mod10Variant.set($event)"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                  >
+                    <option value="luhn">Luhn Algorithm (ISO/IEC 7812: Credit Card, IMEI)</option>
+                    <option value="ean_upc">GS1 / EAN / UPC (Weight 3, 1: Retail Barcode)</option>
+                    <option value="weighted_21">Weighted 2, 1 (Without digit summing)</option>
+                    <option value="custom">Custom Weights</option>
+                  </select>
+                </div>
+              }
+
+              <!-- MOD 11 Specific Variants -->
+              @if (selectedOp() === 'MOD11') {
+                <div>
+                  <label for="mod11Select" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">MOD 11 Standard / Algorithm</label>
+                  <select
+                    id="mod11Select"
+                    [ngModel]="mod11Variant()"
+                    (ngModelChange)="mod11Variant.set($event)"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                  >
+                    <option value="bank_bill_payment">Bank / Bill Payment (Cyclic Weights 2-7: BOT Ref 1 / Ref 2)</option>
+                    <option value="thai_id">Thai National ID (13-digit Citizen ID)</option>
+                    <option value="isbn10">ISBN-10 (Weight 10 down to 2)</option>
+                    <option value="custom">Custom Weights</option>
+                  </select>
+                </div>
+
+                <!-- Remainder 10 handling for MOD 11 -->
+                @if (mod11Variant() === 'bank_bill_payment' || mod11Variant() === 'custom') {
+                  <div>
+                    <label for="rem10Select" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">Remainder 10 Handling</label>
+                    <select
+                      id="rem10Select"
+                      [ngModel]="mod11Rem10()"
+                      (ngModelChange)="mod11Rem10.set($event)"
+                      class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                    >
+                      <option value="0">Map to '0' (Bank / Bill Payment standard)</option>
+                      <option value="X">Map to 'X' (ISO / ISBN standard)</option>
+                      <option value="error">Strict Reject (Raise Error)</option>
+                    </select>
+                  </div>
+                }
+              }
+
+              <!-- Custom Weights input -->
+              @if ((selectedOp() === 'MOD10' && mod10Variant() === 'custom') || (selectedOp() === 'MOD11' && mod11Variant() === 'custom')) {
+                <div>
+                  <label for="customWeightsInput" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">Custom Weights (comma-separated)</label>
+                  <input
+                    id="customWeightsInput"
+                    type="text"
+                    placeholder="e.g. 2,3,4,5,6,7 or 3,1"
+                    [ngModel]="customWeights()"
+                    (ngModelChange)="customWeights.set($event)"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+                  />
+                  <p class="text-[11px] text-slate-400 mt-1">Weights are applied right-to-left cyclically across digits.</p>
+                </div>
+              }
+
+              <!-- MOD 97 Specific Variants -->
+              @if (selectedOp() === 'MOD97') {
+                <div>
+                  <label for="mod97Select" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">MOD 97 Standard</label>
+                  <select
+                    id="mod97Select"
+                    [ngModel]="mod97Variant()"
+                    (ngModelChange)="mod97Variant.set($event)"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                  >
+                    <option value="iso7064">ISO 7064 MOD 97-10 (IBAN / Creditor Reference - 2 digits)</option>
+                    <option value="simple">Simple MOD 97 (Modulo 97 remainder)</option>
+                  </select>
+                </div>
+              }
+
+              <!-- MOD 103 Code Set -->
+              @if (selectedOp() === 'MOD103') {
+                <div>
+                  <label for="mod103Select" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">Code 128 Set</label>
+                  <select
+                    id="mod103Select"
+                    [ngModel]="mod103CodeSet()"
+                    (ngModelChange)="mod103CodeSet.set($event)"
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                  >
+                    <option value="B">Code 128 Set B (Standard alphanumeric & symbols)</option>
+                    <option value="C">Code 128 Set C (Numeric digit pairs - compact)</option>
+                    <option value="A">Code 128 Set A (Uppercase & control codes)</option>
+                  </select>
+                </div>
+              }
+
+              <!-- Output Format Selection -->
+              <div>
+                <label for="outputFormatSelect" class="block text-xs uppercase tracking-wide text-slate-500 mb-1 font-semibold">Output Format</label>
+                <select
+                  id="outputFormatSelect"
+                  [ngModel]="modOutputFormat()"
+                  (ngModelChange)="modOutputFormat.set($event)"
+                  class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700"
+                >
+                  <option value="detailed">Detailed Breakdown</option>
+                  <option value="checkDigitOnly">Check Digit Only</option>
+                  <option value="appended">Full Appended String</option>
+                </select>
+              </div>
+
+              <!-- Ignore spaces / dashes toggle -->
+              <div class="flex items-center gap-2 pt-1">
+                <input
+                  id="cleanInputCheckbox"
+                  type="checkbox"
+                  [ngModel]="cleanInput()"
+                  (ngModelChange)="cleanInput.set($event)"
+                  class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                />
+                <label for="cleanInputCheckbox" class="text-xs text-slate-600 select-none cursor-pointer">
+                  Ignore spaces and hyphens
+                </label>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
+      <!-- Input Text Area -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col">
-        <label class="block text-sm font-semibold text-slate-700 mb-2">Input</label>
+        <div class="flex items-center justify-between mb-2">
+          <label for="inputTextArea" class="block text-sm font-semibold text-slate-700">Input</label>
+          @if (isModOperation()) {
+            <span class="text-xs text-slate-400">Supports multi-line batch processing</span>
+          }
+        </div>
         <textarea
+          id="inputTextArea"
           [ngModel]="inputText()"
           (ngModelChange)="inputText.set($event)"
-          placeholder="Enter text to hash or encrypt..."
+          [placeholder]="
+            isModOperation()
+              ? (modAction() === 'generate'
+                  ? 'Enter payload numbers to compute check digit (multi-line supported)...'
+                  : 'Enter complete numbers with check digit to validate...')
+              : 'Enter text to hash or encrypt...'
+          "
           class="w-full flex-1 min-h-[200px] p-3 font-mono text-sm bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
         ></textarea>
       </div>
@@ -62,10 +247,26 @@
     <!-- Output Section -->
     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
       <div class="flex items-center justify-between mb-2">
-        <label class="block text-sm font-semibold text-slate-700">Output</label>
+        <label for="outputTextArea" class="block text-sm font-semibold text-slate-700">Output</label>
+        @if (resultText()) {
+          <button
+            type="button"
+            (click)="copyResult()"
+            class="px-2.5 py-1 text-xs font-medium rounded-md border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+            [class.text-emerald-600]="copied()"
+            [class.text-slate-600]="!copied()"
+          >
+            @if (copied()) {
+              <span>✓ Copied</span>
+            } @else {
+              <span>Copy Result</span>
+            }
+          </button>
+        }
       </div>
       <div class="relative flex-1">
         <textarea
+          id="outputTextArea"
           readonly
           [value]="resultText()"
           placeholder="Result will appear here..."
