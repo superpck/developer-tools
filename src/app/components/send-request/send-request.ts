@@ -23,6 +23,12 @@ export class SendRequest {
   toasts = signal<Toast[]>([]);
   private toastIdCounter = 0;
 
+  // Save Modal state
+  currentRecordId = signal<number | null>(null);
+  showSaveModal = signal(false);
+  matchedRecord = signal<HistoryRecord | null>(null);
+  saveDescribeInput = signal('');
+
   methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'WS', 'WSS'];
   method = signal('GET');
   url = signal('');
@@ -163,9 +169,36 @@ export class SendRequest {
   }
 
   async save() {
+    const currentMethod = this.method();
+    const currentUrl = this.url().trim();
+
+    // Check if a matching record exists in DB
+    const history = await this.testerService.getHistory();
+    const currentId = this.currentRecordId();
+
+    let matched: HistoryRecord | null = null;
+    if (currentId !== null) {
+      matched = history.find(r => r.id === currentId) ?? null;
+    }
+    if (!matched && currentUrl) {
+      matched = history.find(r => r.method === currentMethod && r.url.trim() === currentUrl) ?? null;
+    }
+
+    this.matchedRecord.set(matched);
+    this.saveDescribeInput.set(matched?.describe ?? '');
+    this.showSaveModal.set(true);
+  }
+
+  closeSaveModal() {
+    this.showSaveModal.set(false);
+    this.matchedRecord.set(null);
+  }
+
+  async confirmSave(overwrite: boolean) {
     const method = this.method();
-    const url = this.url();
+    const url = this.url().trim();
     const socketEventName = this.socketEventName();
+    const describe = this.saveDescribeInput().trim() || undefined;
 
     // 1. Headers (if any non-empty key)
     const validHeaders = this.headers().filter(h => h.key.trim() !== '');
@@ -207,13 +240,10 @@ export class SendRequest {
       }
     }
 
-    const describe = typeof window !== 'undefined' && typeof window.prompt === 'function'
-      ? window.prompt('Describe this request (optional)')?.trim()
-      : undefined;
     const recordToSave: RequestParams = {
       method,
       url,
-      describe: describe || undefined,
+      describe,
       socketEventName: (method === 'WS' || method === 'WSS') ? socketEventName : undefined,
       headers,
       authType,
@@ -224,15 +254,27 @@ export class SendRequest {
       urlEncoded,
     };
 
-    await this.testerService.saveRequest(recordToSave);
-
+    const matched = this.matchedRecord();
     const savedDetails: string[] = [];
     if (headers && headers.length > 0) savedDetails.push(`Headers: ${headers.length}`);
     if (hasAuth) savedDetails.push('Auth: Bearer');
     if (bodyType) savedDetails.push(`Body: ${bodyType}`);
 
     const detailText = savedDetails.length > 0 ? ` (${savedDetails.join(', ')})` : '';
-    this.showToast(`Saved in indexedDB: ${method} ${url || 'Unnamed URL'}${detailText}`);
+
+    if (overwrite && matched && matched.id !== undefined) {
+      await this.testerService.updateRequest(matched.id, recordToSave);
+      this.currentRecordId.set(matched.id);
+      this.showToast(`Updated in indexedDB: ${method} ${url || 'Unnamed URL'}${detailText}`);
+    } else {
+      const newId = await this.testerService.saveRequest(recordToSave);
+      if (typeof newId === 'number') {
+        this.currentRecordId.set(newId);
+      }
+      this.showToast(`Saved as new in indexedDB: ${method} ${url || 'Unnamed URL'}${detailText}`);
+    }
+
+    this.closeSaveModal();
   }
 
   async recall() {
@@ -249,6 +291,9 @@ export class SendRequest {
     }
 
     await this.testerService.deleteRequest(record.id);
+    if (this.currentRecordId() === record.id) {
+      this.currentRecordId.set(null);
+    }
     this.historyList.update(records => records.filter(item => item.id !== record.id));
     this.showToast('Removed from indexedDB');
   }
@@ -273,6 +318,7 @@ export class SendRequest {
   }
 
   loadRecord(record: HistoryRecord) {
+    this.currentRecordId.set(record.id ?? null);
     this.method.set(record.method);
     this.url.set(record.url);
     this.socketEventName.set(record.socketEventName || 'message');

@@ -53,7 +53,7 @@ export class TesterService {
     });
   }
 
-  public async saveRequest(params: RequestParams): Promise<void> {
+  public async saveRequest(params: RequestParams): Promise<number | undefined> {
     try {
       const db = await this.initDb();
       return new Promise((resolve, reject) => {
@@ -66,11 +66,34 @@ export class TesterService {
         };
 
         const request = store.add(record);
-        request.onsuccess = () => resolve();
+        request.onsuccess = () => resolve(request.result as number);
         request.onerror = () => reject(request.error);
       });
     } catch (error) {
       console.error('Failed to save history', error);
+      return undefined;
+    }
+  }
+
+  public async updateRequest(id: number, params: RequestParams): Promise<void> {
+    try {
+      const db = await this.initDb();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(this.storeName, 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+
+        const record: HistoryRecord = {
+          ...params,
+          id,
+          timestamp: Date.now()
+        };
+
+        const request = store.put(record);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Failed to update history', error);
     }
   }
 
