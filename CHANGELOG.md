@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] (Build 2026.10.21-1) - 2026-10-21
+
+### Added
+- **API Request Tool - Enhanced Save & Recall**:
+  - `save()` now conditionally captures and cleans Headers, Auth (Bearer Token), and Body (`raw`, `form-data`, `urlencoded`) only when present, filtering out empty entries.
+  - Toast notifications now display details of saved parameters (e.g. `[Headers: 2, Auth: Bearer, Body: raw]`).
+  - History Recall list now displays visual badges for saved Headers (with count), Bearer Auth, and Body types.
+  - `loadRecord()` properly deep-clones saved arrays to prevent in-place memory mutation.
+
 ## [1.7.0] (Build 2026.10.21-1) - 2026-10-21
 
 ### Added

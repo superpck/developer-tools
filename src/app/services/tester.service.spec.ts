@@ -86,8 +86,7 @@ describe('TesterService', () => {
 
   beforeEach(() => {
     installIndexedDbMock();
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(TesterService);
+    service = new TesterService();
   });
 
   it('should be created', () => {

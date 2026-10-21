@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TesterService, HistoryRecord } from '../../services/tester.service';
+import { TesterService, HistoryRecord, RequestParams } from '../../services/tester.service';
 
 interface Toast {
   id: number;
@@ -163,15 +163,76 @@ export class SendRequest {
   }
 
   async save() {
-    const params = this.getRequestParams();
+    const method = this.method();
+    const url = this.url();
+    const socketEventName = this.socketEventName();
 
-    const describe = window.prompt('Describe this request (optional)')?.trim();
-    await this.testerService.saveRequest({
-      ...params,
+    // 1. Headers (if any non-empty key)
+    const validHeaders = this.headers().filter(h => h.key.trim() !== '');
+    const headers = validHeaders.length > 0 ? validHeaders.map(h => ({ ...h })) : undefined;
+
+    // 2. Auth (if configured)
+    const hasAuth = this.authType() === 'bearer' && this.bearerToken().trim() !== '';
+    const authType = hasAuth ? 'bearer' : undefined;
+    const bearerToken = hasAuth ? this.bearerToken().trim() : undefined;
+
+    // 3. Body (if any)
+    let bodyType: 'none' | 'raw' | 'form-data' | 'urlencoded' | undefined = undefined;
+    let bodyRaw: string | undefined = undefined;
+    let formData: { key: string; value: string; enabled: boolean }[] | undefined = undefined;
+    let urlEncoded: { key: string; value: string; enabled: boolean }[] | undefined = undefined;
+
+    if (method === 'WS' || method === 'WSS') {
+      if (this.bodyRaw().trim() !== '') {
+        bodyType = 'raw';
+        bodyRaw = this.bodyRaw();
+      }
+    } else if (method !== 'GET' && method !== 'HEAD') {
+      const currentBodyType = this.bodyType();
+      if (currentBodyType === 'raw' && this.bodyRaw().trim() !== '') {
+        bodyType = 'raw';
+        bodyRaw = this.bodyRaw();
+      } else if (currentBodyType === 'form-data') {
+        const validFd = this.formData().filter(f => f.key.trim() !== '');
+        if (validFd.length > 0) {
+          bodyType = 'form-data';
+          formData = validFd.map(f => ({ ...f }));
+        }
+      } else if (currentBodyType === 'urlencoded') {
+        const validUe = this.urlEncoded().filter(u => u.key.trim() !== '');
+        if (validUe.length > 0) {
+          bodyType = 'urlencoded';
+          urlEncoded = validUe.map(u => ({ ...u }));
+        }
+      }
+    }
+
+    const describe = typeof window !== 'undefined' && typeof window.prompt === 'function'
+      ? window.prompt('Describe this request (optional)')?.trim()
+      : undefined;
+    const recordToSave: RequestParams = {
+      method,
+      url,
       describe: describe || undefined,
-    });
+      socketEventName: (method === 'WS' || method === 'WSS') ? socketEventName : undefined,
+      headers,
+      authType,
+      bearerToken,
+      bodyType,
+      bodyRaw,
+      formData,
+      urlEncoded,
+    };
 
-    this.showToast(`Saved in indexedDB: ${params.method} ${params.url || 'Unnamed URL'}`);
+    await this.testerService.saveRequest(recordToSave);
+
+    const savedDetails: string[] = [];
+    if (headers && headers.length > 0) savedDetails.push(`Headers: ${headers.length}`);
+    if (hasAuth) savedDetails.push('Auth: Bearer');
+    if (bodyType) savedDetails.push(`Body: ${bodyType}`);
+
+    const detailText = savedDetails.length > 0 ? ` (${savedDetails.join(', ')})` : '';
+    this.showToast(`Saved in indexedDB: ${method} ${url || 'Unnamed URL'}${detailText}`);
   }
 
   async recall() {
@@ -192,17 +253,55 @@ export class SendRequest {
     this.showToast('Removed from indexedDB');
   }
 
+  hasHeaders(item: HistoryRecord): boolean {
+    return !!(item.headers && item.headers.some(h => h.key?.trim() !== ''));
+  }
+
+  headersCount(item: HistoryRecord): number {
+    return item.headers ? item.headers.filter(h => h.key?.trim() !== '').length : 0;
+  }
+
+  hasAuth(item: HistoryRecord): boolean {
+    return item.authType === 'bearer' && !!item.bearerToken?.trim();
+  }
+
+  hasBody(item: HistoryRecord): boolean {
+    if (item.bodyType === 'raw') return !!item.bodyRaw?.trim();
+    if (item.bodyType === 'form-data') return !!(item.formData && item.formData.some(f => f.key?.trim() !== ''));
+    if (item.bodyType === 'urlencoded') return !!(item.urlEncoded && item.urlEncoded.some(u => u.key?.trim() !== ''));
+    return false;
+  }
+
   loadRecord(record: HistoryRecord) {
     this.method.set(record.method);
     this.url.set(record.url);
     this.socketEventName.set(record.socketEventName || 'message');
-    this.headers.set(record.headers && record.headers.length ? record.headers : [{ key: '', value: '', enabled: true }]);
-    this.authType.set(record.authType);
+
+    // Headers
+    this.headers.set(
+      record.headers && record.headers.length
+        ? record.headers.map(h => ({ ...h }))
+        : [{ key: '', value: '', enabled: true }]
+    );
+
+    // Auth
+    this.authType.set(record.authType || 'none');
     this.bearerToken.set(record.bearerToken || '');
-    this.bodyType.set(record.bodyType);
+
+    // Body
+    this.bodyType.set(record.bodyType || 'none');
     this.bodyRaw.set(record.bodyRaw || '');
-    this.formData.set(record.formData && record.formData.length ? record.formData : [{ key: '', value: '', enabled: true }]);
-    this.urlEncoded.set(record.urlEncoded && record.urlEncoded.length ? record.urlEncoded : [{ key: '', value: '', enabled: true }]);
+    this.formData.set(
+      record.formData && record.formData.length
+        ? record.formData.map(f => ({ ...f }))
+        : [{ key: '', value: '', enabled: true }]
+    );
+    this.urlEncoded.set(
+      record.urlEncoded && record.urlEncoded.length
+        ? record.urlEncoded.map(u => ({ ...u }))
+        : [{ key: '', value: '', enabled: true }]
+    );
+
     this.showHistory.set(false);
   }
 }

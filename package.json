@@ -1,6 +1,6 @@
 {
   "name": "basic-development-tool",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "subVersion": "2026.10.21-1",
   "scripts": {
     "ng": "ng",

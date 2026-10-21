@@ -5,13 +5,13 @@ export interface RequestParams {
   method: string;
   url: string;
   describe?: string;
-  headers: { key: string; value: string; enabled: boolean }[];
-  authType: 'none' | 'bearer';
-  bearerToken: string;
-  bodyType: 'none' | 'form-data' | 'urlencoded' | 'raw';
-  bodyRaw: string;
-  formData: { key: string; value: string; enabled: boolean }[];
-  urlEncoded: { key: string; value: string; enabled: boolean }[];
+  headers?: { key: string; value: string; enabled: boolean }[];
+  authType?: 'none' | 'bearer';
+  bearerToken?: string;
+  bodyType?: 'none' | 'form-data' | 'urlencoded' | 'raw';
+  bodyRaw?: string;
+  formData?: { key: string; value: string; enabled: boolean }[];
+  urlEncoded?: { key: string; value: string; enabled: boolean }[];
   socketEventName?: string;
 }
 
@@ -111,7 +111,7 @@ export class TesterService {
   }
 
   private buildSocketPayload(params: RequestParams): unknown {
-    const rawPayload = params.bodyRaw.trim();
+    const rawPayload = params.bodyRaw?.trim() ?? '';
 
     if (!rawPayload) {
       return undefined;
@@ -297,13 +297,13 @@ export class TesterService {
       if (params.method !== 'GET' && params.method !== 'HEAD') {
         if (params.bodyType === 'raw') {
           init.body = params.bodyRaw;
-        } else if (params.bodyType === 'form-data') {
+        } else if (params.bodyType === 'form-data' && params.formData) {
           const fd = new FormData();
           params.formData.forEach(f => {
             if (f.enabled && f.key) fd.append(f.key, f.value);
           });
           init.body = fd;
-        } else if (params.bodyType === 'urlencoded') {
+        } else if (params.bodyType === 'urlencoded' && params.urlEncoded) {
           const urlSearchParams = new URLSearchParams();
           params.urlEncoded.forEach(u => {
             if (u.enabled && u.key) urlSearchParams.append(u.key, u.value);
