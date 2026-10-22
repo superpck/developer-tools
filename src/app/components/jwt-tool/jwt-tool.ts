@@ -60,6 +60,23 @@ export class JwtTool {
     }
   });
 
+  // Payload Timestamps (iat / exp)
+  payloadTimestamps = computed(() => {
+    const payload = this.decodedResult()?.payloadObj;
+    if (!payload || typeof payload !== 'object') return null;
+
+    const iat = typeof payload.iat === 'number' ? new Date(payload.iat * 1000) : null;
+    const exp = typeof payload.exp === 'number' ? new Date(payload.exp * 1000) : null;
+
+    if (!iat && !exp) return null;
+
+    return {
+      iat,
+      exp,
+      isExpired: exp ? exp.getTime() < Date.now() : false,
+    };
+  });
+
   // Verify Signature
   verifySignature = computed(() => {
     const token = this.encodedToken().trim();

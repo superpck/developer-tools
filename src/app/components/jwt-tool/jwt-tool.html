@@ -68,6 +68,30 @@
                 <pre class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono whitespace-pre-wrap">{{ decodedResult()?.payloadObj | json }}</pre>
               </div>
 
+              <!-- Timestamps (iat / exp) -->
+              @if (payloadTimestamps(); as ts) {
+                <div>
+                  <div class="text-xs uppercase font-bold text-violet-500 mb-1">Timestamps</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono space-y-1">
+                    @if (ts.iat) {
+                      <div>
+                        <span class="text-slate-500">iat (Issued At):</span>
+                        {{ ts.iat | date: 'yyyy-MM-dd HH:mm:ss' }}
+                      </div>
+                    }
+                    @if (ts.exp) {
+                      <div [class.text-red-600]="ts.isExpired" [class.font-semibold]="ts.isExpired">
+                        <span class="text-slate-500" [class.text-red-500]="ts.isExpired">exp (Expires At):</span>
+                        {{ ts.exp | date: 'yyyy-MM-dd HH:mm:ss' }}
+                        @if (ts.isExpired) {
+                          <span>(Expired)</span>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
               <!-- Signature Verify section -->
               <div>
                 <div class="text-xs uppercase font-bold text-indigo-500 mb-1">Verify Signature</div>

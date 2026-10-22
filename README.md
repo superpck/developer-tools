@@ -1,7 +1,7 @@
 # Developer Tools for Web Applications
 
-**Version:** 1.7.1  
-**Build:** 2026.10.21-1
+**Version:** 1.7.2  
+**Build:** 2026.10.22-1
 
 A modern, fast, and intuitive web application built with Angular and Tailwind CSS. A collection of everyday developer utilities — all running in the browser with no backend required.
 
@@ -11,7 +11,7 @@ A modern, fast, and intuitive web application built with Angular and Tailwind CS
 - **Request Timers & Metrics**: See your response status, precise latency (ms), and size payload easily.
 - **IndexedDB History & Recall**: Persist requests directly into the browser IndexedDB. Automatically saves configured Headers, Bearer Auth, and Body payloads (only when present), provides informative toast notifications, and displays visual indicator badges (Headers count, Bearer Auth, Body type) in the Recall history modal.
 - **Crypto & Check Digit Tool**: Fast one-way hashing (`MD5`, `SHA1`, `SHA256`, `SHA512`), two-way encoding/encryption (`Base64`, `AES`), and comprehensive Check Digit calculation & validation (`MOD 10`, `MOD 11`, `MOD 97`, `MOD 7`, `MOD 23`, `MOD 43`, `MOD 47`, `MOD 103`, `Verhoeff`, and `Damm`) with detailed arithmetic breakdowns, multi-line batch processing, and customizable options.
-- **JWT Tool**: Seamlessly Decode, Encode, and verify JSON Web Tokens (supporting `HS256`, `HS384`, `HS512` structures) through a side-by-side graphical interface.
+- **JWT Tool**: Seamlessly Decode, Encode, and verify JSON Web Tokens (supporting `HS256`, `HS384`, `HS512` structures) through a side-by-side graphical interface. Decoded payloads with `iat`/`exp` claims show their formatted date & time, with an expired-token indicator.
 - **Text Formatter**: Beautify and pretty-print `JSON`, `XML`, `HTML`, `SQL`, and `URL query strings` — no external libraries, built-in only.
 - **CSV to Table**: Paste CSV data and preview it as an interactive table. Supports custom delimiters (`,` `;` `tab` `|`) and quoted fields. Export as Markdown table.
 - **Markdown Viewer**: Live split-pane Markdown editor with rendered preview. Supports headings, bold, italic, code blocks, blockquotes, lists, links, and images.
