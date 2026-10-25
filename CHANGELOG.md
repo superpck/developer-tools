@@ -5,17 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.3] (Build 2026.10.25-1) - 2026-10-25
+## [1.7.3] (Build 2026.10.25-1)
 
 ### Fixed
 - **API Request Tool - Socket.IO Auth**: WS/WSS requests no longer send a retained/leftover Bearer token in the Socket.IO `auth` handshake after switching Auth Type back to "None" — the token is now only included when Auth Type is actually "Bearer".
 
-## [1.7.2] (Build 2026.10.22-1) - 2026-10-22
+## [1.7.2] (Build 2026.10.22-1)
 
 ### Added
 - **JWT Tool - Readable Timestamps**: Decoded payload now shows a dedicated "Timestamps" section with formatted date & time for `iat` (Issued At) and `exp` (Expires At) claims, alongside the raw JSON. Expired tokens are highlighted in red with an "(Expired)" indicator.
 
-## [1.7.1] (Build 2026.10.21-1) - 2026-10-21
+## [1.7.1] (Build 2026.10.21-1)
 
 ### Added
 - **API Request Tool - Enhanced Save & Recall**:
@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - History Recall list now displays visual badges for saved Headers (with count), Bearer Auth, and Body types.
   - `loadRecord()` properly deep-clones saved arrays to prevent in-place memory mutation.
 
-## [1.7.0] (Build 2026.10.21-1) - 2026-10-21
+## [1.7.0] (Build 2026.10.21-1)
 
 ### Added
 - **Check Digit / MOD Algorithms in Crypto Tool**: Comprehensive Check Digit computation and validation suite supporting all major industrial, banking, identity, and barcode checksum standards:
@@ -44,23 +44,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clean input toggle to automatically ignore spaces and hyphens.
   - One-click copy result to clipboard.
 
-## [1.6.0] (Build 2026.10.11-1) - 2026-10-11
+## [1.6.0] (Build 2026.10.11-1)
 
 ### Added
 - **URL Checking**: Pre-release testing tool for an API endpoint — burst/rate-limit detection (capped request count and concurrency to avoid accidentally overloading a production service), common injection payload testing (XSS, SQL injection, path traversal, command injection, CRLF/header injection, open redirect) via auto-detected query parameters or an explicit `{{payload}}` placeholder, a CORS configuration check, and a recommended security response-headers check. Available at `/url-checking` (not yet linked from the home page).
 - Consolidated, severity-ranked security recommendation checklist generated from URL Checking results, plus one-click export of the full report as a Markdown (`.md`) file.
 
-## [1.5.0] (Build 2026.10.03-1) - 2026-10-03
+## [1.5.0] (Build 2026.10.03-1)
 
 ### Added
 - **Subnet Calculator**: Calculate IPv4 network/broadcast address, usable host range, wildcard mask, and reverse DNS pointer from an IP plus a CIDR prefix (`24`) or dotted mask (`255.255.255.0`). Classifies the entered address as private, public, loopback, link-local (APIPA), multicast, CGNAT, documentation, benchmarking, and more per IANA special-purpose ranges, plus a built-in CIDR cheat sheet — no external libraries.
 
-## [1.4.0] (Build 2026.10.02-1) - 2026-10-02
+## [1.4.0] (Build 2026.10.02-1)
 
 ### Added
 - **Text Formatter**: SQL beautifier added alongside JSON/XML/HTML/URL Params — formats `SELECT`, `JOIN`, `WHERE`/`AND`/`OR`, `GROUP BY`/`ORDER BY`, subqueries, and `INSERT`/`VALUES` statements using a built-in tokenizer, no external library.
 
-## [1.3.0] (Build 2026.08.03-1) - 2026-08-03
+## [1.3.0] (Build 2026.08.03-1)
 
 ### Added
 - **Text Formatter**: Pretty-print `JSON`, `XML`, `HTML`, and `URL query strings` using built-in browser APIs only (no external libraries).
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated the Recall modal to show the description as a smaller secondary line.
 
-## [1.0.1] (Build 2026.06.08-2) - 2026-06-08
+## [1.0.1] (Build 2026.06.08-2)
 
 ### Added
 - **API Request Tool**: Full-featured HTTP client allowing users to configure Methods, URL, Headers, Auth (Bearer context), and Request Bodies (raw, form-data, urlencoded).
