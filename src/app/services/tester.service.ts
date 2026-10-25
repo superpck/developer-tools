@@ -188,7 +188,7 @@ export class TesterService {
     return new Promise(resolve => {
       const socket = io(socketUrl, {
         autoConnect: false,
-        auth: params.bearerToken ? { token: params.bearerToken } : undefined,
+        auth: (params.authType === 'bearer' && params.bearerToken) ? { token: params.bearerToken } : undefined,
       });
 
       let settled = false;

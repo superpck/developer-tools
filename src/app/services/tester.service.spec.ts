@@ -147,4 +147,28 @@ describe('TesterService', () => {
     expect(response.body.emittedEvent).toBe('chat:message');
     expect(response.body.ack).toEqual(['ok']);
   });
+
+  it('does not send a retained bearer token to socket.io when authType is none', async () => {
+    const mockSocket = new MockSocket();
+    ioMock.mockReturnValue(mockSocket as never);
+
+    await service.sendRequest({
+      method: 'WS',
+      url: 'ws://localhost:3000',
+      headers: [],
+      authType: 'none',
+      // Simulates a user switching from Bearer Token to No Auth without clearing the field.
+      bearerToken: 'leftover-secret-token',
+      bodyType: 'raw',
+      bodyRaw: '{"hello":"world"}',
+      formData: [],
+      urlEncoded: [],
+      socketEventName: 'chat:message',
+    });
+
+    expect(ioMock).toHaveBeenCalledWith('http://localhost:3000', expect.objectContaining({
+      autoConnect: false,
+      auth: undefined,
+    }));
+  });
 });

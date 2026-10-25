@@ -1,7 +1,7 @@
 # Developer Tools for Web Applications
 
 **Version:** 1.7.2  
-**Build:** 2026.10.22-1
+**Build:** 2026.10.25-1
 
 A modern, fast, and intuitive web application built with Angular and Tailwind CSS. A collection of everyday developer utilities — all running in the browser with no backend required.
 
